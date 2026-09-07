@@ -339,9 +339,79 @@ body {
 .site-footer {
   background: #0A0E1A;
   color: #94A3B8;
-  padding: 60px 0 30px;
+  padding: 50px 0 30px;
   margin-top: 60px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Footer Trust Features Banner */
+.footer-trust-banner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding-bottom: 40px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-trust-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px 18px;
+  transition: var(--transition-fast);
+}
+
+.footer-trust-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(0, 102, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.footer-trust-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(0, 102, 255, 0.15);
+  color: #38BDF8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 102, 255, 0.3);
+}
+
+.footer-trust-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-trust-title {
+  color: #FFFFFF;
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.footer-trust-sub {
+  color: #94A3B8;
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
+@media (max-width: 860px) {
+  .footer-trust-banner {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+  }
 }
 
 .footer-grid {
