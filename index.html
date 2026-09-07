@@ -213,7 +213,7 @@
                 <div class="duration-web-card duration-card custom-trigger-card" id="customDurationCard" data-hours="custom" onclick="customerCtrl.selectCustomDurationMode()">
                   <span class="dur-hrs"><i class="fa-solid fa-sliders"></i> Custom</span>
                   <span class="dur-cost" id="customCardPrice">Set Hrs</span>
-                  <span class="duration-badge-trip" id="customCardLabel">1h–24h</span>
+                  <span class="duration-badge-trip" id="customCardLabel">2h–24h</span>
                 </div>
               </div>
 
@@ -237,11 +237,11 @@
                   </button>
                 </div>
 
-                <input type="range" class="custom-range-slider" id="customDurationSlider" min="1" max="24" step="1" value="3" oninput="customerCtrl.onCustomSliderChange(this.value)">
+                <input type="range" class="custom-range-slider" id="customDurationSlider" min="2" max="24" step="1" value="3" oninput="customerCtrl.onCustomSliderChange(this.value)">
 
                 <div class="quick-custom-chips">
                   <span style="font-size: 0.72rem; color: #64748B; font-weight: 700;">Quick:</span>
-                  <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(1)">1h</button>
+                  <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(2)">2h</button>
                   <button type="button" class="quick-hour-chip active" onclick="customerCtrl.setCustomHours(3)">3h</button>
                   <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(5)">5h</button>
                   <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(7)">7h</button>

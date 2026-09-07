@@ -245,17 +245,17 @@ class CustomerController {
   }
 
   adjustCustomHours(delta) {
-    this.customHours = Math.max(1, Math.min(24, this.customHours + delta));
+    this.customHours = Math.max(2, Math.min(24, this.customHours + delta));
     this.selectCustomDurationMode();
   }
 
   onCustomSliderChange(val) {
-    this.customHours = parseInt(val, 10);
+    this.customHours = Math.max(2, Math.min(24, parseInt(val, 10)));
     this.selectCustomDurationMode();
   }
 
   setCustomHours(hours) {
-    this.customHours = hours;
+    this.customHours = Math.max(2, Math.min(24, hours));
     this.selectCustomDurationMode();
   }
 
