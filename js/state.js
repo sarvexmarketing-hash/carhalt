@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DRIVERBEE - ON-DEMAND DRIVER / CHAUFFEUR PLATFORM STATE STORE
+   DRIVERBEE - ON-DEMAND DRIVER PLATFORM STATE STORE
    Professional driver rental on demand for fixed durations (2h, 4h, 6h, 8h)
    ========================================================================== */
 
@@ -60,7 +60,7 @@ const DEFAULT_STATE = {
     {
       id: 'drv_1',
       name: 'Rajesh Kumar',
-      category: 'Top Rated Chauffeur',
+      category: 'Top Rated Driver',
       specialty: 'All Cars · Automatic & Manual Expert',
       experienceYears: 8,
       rating: 4.9,
@@ -89,7 +89,7 @@ const DEFAULT_STATE = {
       phone: '+91 98765 43210',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
       languages: ['English', 'Hindi'],
-      badge: 'Executive Chauffeur',
+      badge: 'Executive Driver',
       isOnline: true,
       currentLocation: [12.9310, 77.6210],
       priceMultiplier: 1.1,
@@ -136,7 +136,7 @@ const DEFAULT_STATE = {
     {
       id: 'drv_5',
       name: 'Manjunath Swamy',
-      category: 'Corporate & Executive Chauffeur',
+      category: 'Corporate & Executive Driver',
       specialty: 'Corporate Travel, Airport & VIP Protocols',
       experienceYears: 9,
       rating: 5.0,

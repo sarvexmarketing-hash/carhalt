@@ -1,6 +1,6 @@
 /* ==========================================================================
    DRIVERBEE - ON-DEMAND DRIVER CUSTOMER CONTROLLER
-   Booking verified professional chauffeurs for fixed durations (2h, 4h, 6h, 8h)
+   Booking verified professional drivers for fixed durations (2h, 4h, 6h, 8h)
    ========================================================================== */
 
 class CustomerController {
@@ -216,7 +216,7 @@ class CustomerController {
       window.mapManager.initDispatcherMap('matchedDriversMap');
     }, 200);
 
-    window.showToast(`Found 6 verified chauffeurs available in ${updatedState.selection.pickupAddress.split(',')[0]}!`, 'success');
+    window.showToast(`Found 6 verified drivers available in ${updatedState.selection.pickupAddress.split(',')[0]}!`, 'success');
   }
 
   filterResultsCategory(cat, btn) {
@@ -401,7 +401,7 @@ class CustomerController {
                 <span class="fleet-price-sub" style="font-weight: 700; color: #64748B;">Total for ${duration} Hours (${tripType === 'outside' ? 'Outside City' : 'Within City'})</span>
               </div>
               <button class="fleet-btn-book" style="padding: 13px 28px; font-size: 0.95rem;" onclick="customerCtrl.openBookingDrawer('${driver.id}')">
-                <span>Hire This Chauffeur</span>
+                <span>Hire This Driver</span>
                 <i class="fa-solid fa-arrow-right" style="font-size: 0.8rem;"></i>
               </button>
             </div>
