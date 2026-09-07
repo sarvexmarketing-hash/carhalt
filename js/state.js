@@ -3,7 +3,7 @@
    Professional driver rental on demand for fixed durations (2h, 4h, 6h, 8h)
    ========================================================================== */
 
-const STORAGE_KEY = 'driverbee_on_demand_state_v5';
+const STORAGE_KEY = 'driverbee_on_demand_state_v6';
 
 const DEFAULT_STATE = {
   // Configurable Pricing Matrix for Driver Services
@@ -68,7 +68,7 @@ const DEFAULT_STATE = {
       etaMins: 6,
       distanceKm: 1.2,
       phone: '+91 98450 12345',
-      avatar: 'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=300&h=300&q=80',
+      avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80',
       languages: ['Telugu', 'English', 'Hindi'],
       badge: 'Uniformed & Verified',
       isOnline: true,

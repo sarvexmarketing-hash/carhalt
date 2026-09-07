@@ -376,7 +376,7 @@ class CustomerController {
             </div>
 
             <div style="display: flex; gap: 20px; align-items: flex-start; margin: 12px 0 16px;">
-              <img src="${driver.avatar}" alt="${driver.name}" style="width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 3px solid #0066FF; box-shadow: 0 4px 14px rgba(0, 102, 255, 0.25);">
+              <img src="${driver.avatar}" alt="${driver.name}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80'" style="width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 3px solid #0066FF; box-shadow: 0 4px 14px rgba(0, 102, 255, 0.25);">
               <div style="flex: 1;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <h3 style="font-size: 1.35rem; font-weight: 900; color: #0F172A; margin: 0;">${driver.name}</h3>
@@ -418,7 +418,7 @@ class CustomerController {
           </div>
 
           <div style="display: flex; align-items: center; gap: 16px; margin: 12px 0 16px;">
-            <img src="${driver.avatar}" alt="${driver.name}" style="width: 78px; height: 78px; border-radius: 50%; object-fit: cover; border: 3px solid #0066FF; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <img src="${driver.avatar}" alt="${driver.name}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80'" style="width: 78px; height: 78px; border-radius: 50%; object-fit: cover; border: 3px solid #0066FF; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             <div>
               <h3 class="fleet-car-title" style="margin-bottom: 2px;">${driver.name}</h3>
               <div style="font-size: 0.82rem; font-weight: 800; color: #F59E0B; margin-bottom: 4px;">
