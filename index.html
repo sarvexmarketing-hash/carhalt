@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriverBee | Hire a Driver on Demand | Your Car, Our Chauffeur</title>
+  <meta name="description" content="DriverBee - Hire a verified professional driver on demand to drive your car. Available 24x7 for 2h, 4h, 6h, or 8h durations. Reaches your doorstep in 8 minutes.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Leaflet Maps CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="css/main.css?v=5">
+  <link rel="stylesheet" href="css/components.css?v=5">
+</head>
+<body>
+
+  <!-- Sticky Luxury Website Navbar -->
+  <header class="site-navbar">
+    <div class="container nav-container">
+      <a href="#hero" class="site-brand">
+        <div class="brand-icon-box" style="background: linear-gradient(135deg, #F59E0B, #D97706); box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
+          <i class="fa-solid fa-bolt" style="color: #FFFFFF;"></i>
+        </div>
+        <span>Driver<span style="color: #F59E0B;">Bee</span></span>
+        <span class="site-brand-badge" style="background: #FFFBEB; color: #B45309; border-color: rgba(245, 158, 11, 0.3);">ON DEMAND CHAUFFEUR</span>
+      </a>
+
+      <ul class="nav-menu-links">
+        <li><a href="#hero" class="nav-link active">Hire a Driver</a></li>
+        <li><a href="#fleetShowcase" class="nav-link">Top Chauffeurs</a></li>
+        <li><a href="#useCasesSection" class="nav-link">Services & Use Cases</a></li>
+        <li><a href="#howItWorks" class="nav-link">How It Works</a></li>
+        <li><a href="#pricingMatrixSection" class="nav-link">Hourly Rates</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-btn-secondary" id="btnMyBookingsNav">
+          <i class="fa-solid fa-calendar-check" style="color: #0066FF;"></i>
+          <span>My Bookings</span>
+        </button>
+
+        <button class="nav-btn-primary" onclick="showToast('Customer Account: Javed Sayed (+91 98765 43210)', 'accent')">
+          <i class="fa-solid fa-circle-user"></i>
+          <span>Javed Sayed</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Website Content Area -->
+  <div class="main-website-content">
+
+    <!-- ==========================================================
+         VIEW 1: CUSTOMER DRIVER BOOKING WEBSITE
+         ========================================================== -->
+    <div id="customerAppView" style="display: flex; flex-direction: column; width: 100%;">
+
+      <!-- ACTIVE LIVE DRIVER BANNER (Appears if user has active session) -->
+      <div id="customerActiveSessionAlert" style="display: none; background: #0A0E1A; color: #fff; padding: 14px 0; border-bottom: 2px solid #0066FF;">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <span class="badge badge-success"><i class="fa-solid fa-circle-dot fa-fade"></i> DRIVER SESSION ACTIVE</span>
+            <span id="activeAlertText" style="font-weight: 700;">Rajesh Kumar is assigned to drive your car</span>
+          </div>
+          <button id="btnOpenActiveTracker" style="background: #0066FF; color: #fff; border: none; border-radius: var(--radius-full); padding: 7px 20px; font-weight: 800; font-size: 0.88rem; cursor: pointer;">
+            View Driver Live Tracking & HUD <i class="fa-solid fa-arrow-right" style="margin-left: 4px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- A. HERO SECTION WITH RICH DRIVER BOOKING WIDGET -->
+      <section class="hero-web-section" id="hero">
+        <div class="hero-mesh-bg"></div>
+        <div class="container hero-grid-layout">
+          
+          <!-- Left Hero Typography -->
+          <div class="hero-content-left">
+            <div class="hero-pill-tag">
+              <i class="fa-solid fa-shield-check" style="color: #0066FF;"></i>
+              <span>100% Background & Police Verified Chauffeurs</span>
+            </div>
+
+            <h1 class="hero-heading">
+              Your Car.<br>
+              Our Chauffeur.<br>
+              <span class="gradient-text-accent">On Demand.</span>
+            </h1>
+
+            <p class="hero-description">
+              Hire a professional verified chauffeur to drive your personal car. Whether for daily city traffic, late-night party drops, shopping runs, or weekend outstation road trips — your driver reaches your doorstep in <b>~8 minutes</b>.
+            </p>
+
+            <div class="hero-trust-grid">
+              <div class="trust-card">
+                <div class="trust-icon"><i class="fa-solid fa-id-card"></i></div>
+                <div class="trust-text">
+                  <div class="trust-title">Police & KYC</div>
+                  <div class="trust-sub">100% Background Verified</div>
+                </div>
+              </div>
+              <div class="trust-card">
+                <div class="trust-icon"><i class="fa-solid fa-car-side"></i></div>
+                <div class="trust-text">
+                  <div class="trust-title">Manual & Auto</div>
+                  <div class="trust-sub">Luxury Sedans & SUVs</div>
+                </div>
+              </div>
+              <div class="trust-card">
+                <div class="trust-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <div class="trust-text">
+                  <div class="trust-title">Flexible 2h–8h</div>
+                  <div class="trust-sub">From ₹150/hr Package</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Hero Interactive Booking Box -->
+          <div class="hero-booking-card">
+            <div class="widget-header-row">
+              <div class="widget-header-title">
+                <div class="widget-header-icon-box">
+                  <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <div>
+                  <div class="widget-title-text">Book a Chauffeur</div>
+                  <div class="widget-title-sub">Professional driver for your car</div>
+                </div>
+              </div>
+              <div class="widget-live-badge">
+                <div class="pulse-dot-green"></div>
+                <span>24 Online</span>
+              </div>
+            </div>
+
+            <!-- Service Options Tabs (Within City vs Outside City) -->
+            <div class="service-mode-tabs">
+              <button class="service-tab-btn active trip-type-card" data-type="within" type="button">
+                <i class="fa-solid fa-city"></i>
+                <span>Within City</span>
+              </button>
+              <button class="service-tab-btn trip-type-card" data-type="outside" type="button">
+                <i class="fa-solid fa-road"></i>
+                <span>Outstation Trip</span>
+              </button>
+            </div>
+
+            <!-- Pickup Location Input -->
+            <div class="widget-input-group">
+              <div class="widget-label-row">
+                <label class="widget-label">PICKUP LOCATION</label>
+                <button type="button" class="btn-saved-places" onclick="customerCtrl.openLocationModal()">
+                  Saved areas <i class="fa-solid fa-chevron-down"></i>
+                </button>
+              </div>
+              <div class="widget-input-wrap">
+                <i class="fa-solid fa-location-dot input-icon-left"></i>
+                <input type="text" class="widget-input" id="locationSearchInput" placeholder="Enter your pickup address" value="Koramangala 4th Block, Bengaluru">
+                <button class="btn-gps-action" id="useGpsBtn" type="button" title="Detect GPS location">
+                  <i class="fa-solid fa-crosshairs"></i>
+                  <span class="gps-text">GPS</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Outstation Destination (Visible when Outside City is selected) -->
+            <div class="outstation-dest-web" id="outstationDestCard">
+              <label class="widget-label" style="color: #0066FF;">
+                <i class="fa-solid fa-route"></i> OUTSTATION DESTINATION CITY
+              </label>
+              <div class="widget-input-wrap">
+                <i class="fa-solid fa-map-pin input-icon-left" style="color: #0066FF;"></i>
+                <input type="text" class="widget-input" id="outstationDestInput" placeholder="e.g. Mysore, Nandi Hills, Coorg, Ooty, Chennai">
+              </div>
+            </div>
+
+            <!-- Car Transmission & Category Selector -->
+            <div class="widget-input-group">
+              <label class="widget-label">CAR TRANSMISSION & TYPE</label>
+              <div class="car-spec-select-row">
+                <button class="car-spec-btn active" type="button" onclick="document.querySelectorAll('.car-spec-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); showToast('Automatic car specialist assigned', 'accent');">
+                  <i class="fa-solid fa-gear spec-icon"></i>
+                  <span class="spec-label">Automatic</span>
+                </button>
+                <button class="car-spec-btn" type="button" onclick="document.querySelectorAll('.car-spec-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); showToast('Manual transmission driver assigned', 'accent');">
+                  <i class="fa-solid fa-sliders spec-icon"></i>
+                  <span class="spec-label">Manual</span>
+                </button>
+                <button class="car-spec-btn" type="button" onclick="document.querySelectorAll('.car-spec-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); showToast('Executive Luxury chauffeur assigned', 'accent');">
+                  <i class="fa-solid fa-crown spec-icon" style="color: #F59E0B;"></i>
+                  <span class="spec-label">Luxury / SUV</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Duration Selection Cards -->
+            <div class="widget-input-group">
+              <div class="widget-label-row">
+                <label class="widget-label">SELECT BOOKING DURATION</label>
+                <span class="widget-rate-hint">From ₹150/hr</span>
+              </div>
+
+              <div class="duration-web-grid">
+                <div class="duration-web-card duration-card active" data-hours="2">
+                  <span class="dur-hrs duration-time">2 Hours</span>
+                  <span class="dur-cost duration-price">₹300</span>
+                  <span class="duration-badge-trip">Within City</span>
+                </div>
+
+                <div class="duration-web-card duration-card" data-hours="4">
+                  <span class="dur-hrs duration-time">4 Hours</span>
+                  <span class="dur-cost duration-price">₹600</span>
+                  <span class="duration-badge-trip">Within City</span>
+                </div>
+
+                <div class="duration-web-card duration-card" data-hours="6">
+                  <span class="dur-hrs duration-time">6 Hours</span>
+                  <span class="dur-cost duration-price">₹900</span>
+                  <span class="duration-badge-trip">Within City</span>
+                </div>
+
+                <div class="duration-web-card duration-card" data-hours="8">
+                  <span class="dur-hrs duration-time">8 Hours</span>
+                  <span class="dur-cost duration-price">₹1,200</span>
+                  <span class="duration-badge-trip">Within City</span>
+                </div>
+
+                <div class="duration-web-card duration-card custom-trigger-card" id="customDurationCard" data-hours="custom" onclick="customerCtrl.selectCustomDurationMode()">
+                  <span class="dur-hrs"><i class="fa-solid fa-sliders"></i> Custom</span>
+                  <span class="dur-cost" id="customCardPrice">Set Hrs</span>
+                  <span class="duration-badge-trip" id="customCardLabel">1h–24h</span>
+                </div>
+              </div>
+
+              <!-- Custom Duration Stepper & Slider Panel -->
+              <div class="custom-duration-panel" id="customDurationPanel">
+                <div class="custom-panel-header">
+                  <span class="custom-panel-title"><i class="fa-solid fa-clock-rotate-left"></i> Custom Hours</span>
+                  <span class="custom-panel-badge" id="customRateBadge">₹150 / hr</span>
+                </div>
+
+                <div class="custom-stepper-wrap">
+                  <button type="button" class="stepper-btn" onclick="customerCtrl.adjustCustomHours(-1)" title="Decrease 1 Hour">
+                    <i class="fa-solid fa-minus"></i>
+                  </button>
+                  <div class="stepper-val-display">
+                    <div class="stepper-val-hrs" id="customHoursDisplay">3 Hours</div>
+                    <div class="stepper-val-sub" id="customCalculatedFare">Total Fare: ₹450</div>
+                  </div>
+                  <button type="button" class="stepper-btn" onclick="customerCtrl.adjustCustomHours(1)" title="Increase 1 Hour">
+                    <i class="fa-solid fa-plus"></i>
+                  </button>
+                </div>
+
+                <input type="range" class="custom-range-slider" id="customDurationSlider" min="1" max="24" step="1" value="3" oninput="customerCtrl.onCustomSliderChange(this.value)">
+
+                <div class="quick-custom-chips">
+                  <span style="font-size: 0.72rem; color: #64748B; font-weight: 700;">Quick:</span>
+                  <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(1)">1h</button>
+                  <button type="button" class="quick-hour-chip active" onclick="customerCtrl.setCustomHours(3)">3h</button>
+                  <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(5)">5h</button>
+                  <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(7)">7h</button>
+                  <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(10)">10h</button>
+                  <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(12)">12h</button>
+                  <button type="button" class="quick-hour-chip" onclick="customerCtrl.setCustomHours(24)">24h</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Search Button: Opens Dedicated Matched Drivers Page -->
+            <button class="btn-search-cars" id="btnFindMatchDrivers" type="button" onclick="customerCtrl.openDriversPage()">
+              <span>Find & Match Available Drivers</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- B. TOP VERIFIED CHAUFFEURS FLEET SHOWCASE -->
+      <section class="web-section" id="fleetShowcase">
+        <div class="container">
+          <div class="section-title-wrap">
+            <span class="section-tag">Bangalore's Elite Drivers</span>
+            <h2 class="section-main-heading">Top Verified Chauffeurs Available Now</h2>
+            <p class="section-sub-heading">Experienced with Automatic, Manual, Luxury Sedans & SUVs. Ready to drive your car.</p>
+          </div>
+
+          <!-- Category Filter Bar -->
+          <div class="fleet-controls-bar">
+            <div class="fleet-pills-row">
+              <button class="cat-pill fleet-filter-pill active" data-category="all">All Chauffeurs</button>
+              <button class="cat-pill fleet-filter-pill" data-category="Top Rated">Top Rated</button>
+              <button class="cat-pill fleet-filter-pill" data-category="Luxury">Luxury Specialists</button>
+              <button class="cat-pill fleet-filter-pill" data-category="Outstation">Outstation Veterans</button>
+              <button class="cat-pill fleet-filter-pill" data-category="Corporate">Executive / VIP</button>
+            </div>
+
+            <div style="font-size: 0.9rem; font-weight: 800; color: #475569; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-location-dot" style="color: #0066FF;"></i> Driver meets you at: <b id="currentLocText" style="color: #0F172A;">Koramangala 4th Block, Bengaluru</b>
+            </div>
+          </div>
+
+          <!-- Drivers Cards Grid -->
+          <div class="fleet-cards-web-grid" id="popularCarsList">
+            <!-- Dynamically populated by js/customer.js -->
+          </div>
+        </div>
+      </section>
+
+
+      <!-- C. POPULAR SERVICES & USE-CASES -->
+      <section class="web-section" id="useCasesSection" style="background: #FFFFFF; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+        <div class="container">
+          <div class="section-title-wrap">
+            <span class="section-tag">Designed for Every Occasion</span>
+            <h2 class="section-main-heading">When Do You Need a Driver?</h2>
+            <p class="section-sub-heading">From weekend road trips to late-night party drops, we've got you covered.</p>
+          </div>
+
+          <div class="use-cases-grid">
+            <div class="use-case-card" onclick="customerCtrl.setBookingDuration(4); showToast('Selected 4 Hours Night Chauffeur package', 'accent');">
+              <div class="use-case-icon-box" style="background: #EEF4FF; color: #0066FF;">
+                <i class="fa-solid fa-moon"></i>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A;">Late Night & Party Safe Drops</h3>
+              <p style="font-size: 0.85rem; color: #64748B;">Enjoy your party or dinner without worrying about driving back. A safe driver drives you home in your own car.</p>
+            </div>
+
+            <div class="use-case-card" onclick="document.querySelector('.trip-type-card[data-type=outside]').click(); showToast('Selected Outstation Road Trip package', 'accent');">
+              <div class="use-case-icon-box" style="background: #ECFDF5; color: #10B981;">
+                <i class="fa-solid fa-mountain-sun"></i>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A;">Weekend Outstation Road Trips</h3>
+              <p style="font-size: 0.85rem; color: #64748B;">Heading to Mysore, Coorg, Ooty, or Nandi Hills? Enjoy the scenic route with an experienced highway chauffeur.</p>
+            </div>
+
+            <div class="use-case-card" onclick="customerCtrl.setBookingDuration(8); showToast('Selected 8 Hours Full Day package', 'accent');">
+              <div class="use-case-icon-box" style="background: #FFFBEB; color: #F59E0B;">
+                <i class="fa-solid fa-briefcase"></i>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A;">Full Day City Commute & Meetings</h3>
+              <p style="font-size: 0.85rem; color: #64748B;">Work, make phone calls, and attend back-to-back meetings while your driver navigates heavy Bangalore traffic.</p>
+            </div>
+
+            <div class="use-case-card" onclick="showToast('Airport terminal pickup selected', 'accent');">
+              <div class="use-case-icon-box" style="background: #F5F3FF; color: #8B5CF6;">
+                <i class="fa-solid fa-plane-departure"></i>
+              </div>
+              <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A;">Airport Pickup & Drop</h3>
+              <p style="font-size: 0.85rem; color: #64748B;">Have your driver take your car to BLR Airport Terminal 1 or 2, assist with heavy luggage, and bring you home.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- D. HOW IT WORKS SECTION -->
+      <section class="web-section" id="howItWorks">
+        <div class="container">
+          <div class="section-title-wrap">
+            <span class="section-tag">Effortless On-Demand Driving</span>
+            <h2 class="section-main-heading">How Driver-on-Demand Works</h2>
+            <p class="section-sub-heading">Hire a professional to drive your car anywhere in four easy steps.</p>
+          </div>
+
+          <div class="how-it-works-grid">
+            <div class="step-card">
+              <div class="step-number-badge">1</div>
+              <h3 class="step-card-title">Book a Driver</h3>
+              <p class="step-card-desc">Share your location, car transmission (Manual/Automatic), and duration (2h, 4h, 6h, 8h).</p>
+            </div>
+
+            <div class="step-card">
+              <div class="step-number-badge">2</div>
+              <h3 class="step-card-title">Driver Arrives in ~8 Mins</h3>
+              <p class="step-card-desc">A background-verified uniformed chauffeur reaches your location directly on their two-wheeler.</p>
+            </div>
+
+            <div class="step-card">
+              <div class="step-number-badge">3</div>
+              <h3 class="step-card-title">Driver Drives Your Car</h3>
+              <p class="step-card-desc">Share your 4-digit OTP. The driver takes the wheel of your car and drives you safely wherever you need.</p>
+            </div>
+
+            <div class="step-card">
+              <div class="step-number-badge">4</div>
+              <h3 class="step-card-title">Relax & Pay for Time</h3>
+              <p class="step-card-desc">Keep the driver for your full booked duration. Extend anytime or complete the trip seamlessly.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- E. TRANSPARENT PRICING MATRIX SECTION -->
+      <section class="web-section" id="pricingMatrixSection" style="background: #F1F5F9; border-top: 1px solid var(--border-subtle);">
+        <div class="container">
+          <div class="section-title-wrap">
+            <span class="section-tag">Transparent Hourly Rates</span>
+            <h2 class="section-main-heading">Clear Driver Pricing. Zero Hidden Fees.</h2>
+            <p class="section-sub-heading">Fixed package pricing with base rates of ₹150/hr for City and ₹200/hr for Outstation.</p>
+          </div>
+
+          <div class="pricing-matrix-container">
+            <table class="pricing-web-table">
+              <thead>
+                <tr>
+                  <th>Driver Booking Duration</th>
+                  <th>Within City Driver Rate</th>
+                  <th>Outside City (Outstation Driver)</th>
+                  <th>Included Benefits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>2 Hours Duration</b></td>
+                  <td><span style="font-size: 1.3rem; font-weight: 900; color: #0066FF;">₹300</span> <span class="badge-pop-rate">Popular</span></td>
+                  <td><span style="font-size: 1.3rem; font-weight: 900; color: #0F172A;">₹400</span></td>
+                  <td>Doorstep arrival in 8 mins, Safe city navigation, Multiple stops</td>
+                </tr>
+                <tr>
+                  <td><b>4 Hours Duration</b></td>
+                  <td><span style="font-size: 1.3rem; font-weight: 900; color: #0066FF;">₹600</span></td>
+                  <td><span style="font-size: 1.3rem; font-weight: 900; color: #0F172A;">₹800</span></td>
+                  <td>Party night drops, Shopping trips, Hospital visits & waiting</td>
+                </tr>
+                <tr>
+                  <td><b>6 Hours Duration</b></td>
+                  <td><span style="font-size: 1.3rem; font-weight: 900; color: #0066FF;">₹900</span></td>
+                  <td><span style="font-size: 1.3rem; font-weight: 900; color: #0F172A;">₹1,200</span></td>
+                  <td>Outstation day trips (Nandi Hills, Mysore), Highway veteran driver</td>
+                </tr>
+                <tr>
+                  <td><b>8 Hours (Full Day Driver)</b></td>
+                  <td><span style="font-size: 1.3rem; font-weight: 900; color: #0066FF;">₹1,200</span> <span class="badge-pop-rate">Best Value</span></td>
+                  <td><span style="font-size: 1.3rem; font-weight: 900; color: #0F172A;">₹1,600</span></td>
+                  <td>Dedicated chauffeur for full business day / family functions</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ==========================================================
+         VIEW 1.5: DEDICATED MATCHED DRIVERS DIRECTORY PAGE
+         ========================================================== -->
+    <div id="driverResultsView" style="display: none; padding: 40px 0; background: #F8FAFC; min-height: 85vh;">
+      <div class="container">
+        
+        <!-- Breadcrumb & Top Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #64748B; margin-bottom: 4px;">
+              <a href="javascript:void(0)" onclick="window.switchAppView('screen-home')" style="color: #0066FF; text-decoration: none; font-weight: 700;"><i class="fa-solid fa-arrow-left"></i> Back to Booking Widget</a>
+              <span>/</span>
+              <span style="font-weight: 600;">Available Drivers Near You</span>
+            </div>
+            <h1 style="font-size: 2.2rem; font-weight: 900; color: #0A0E1A; letter-spacing: -0.03em; margin: 0;">Matched Verified Drivers</h1>
+            <p style="color: #64748B; font-size: 1rem; margin-top: 4px;">6 verified professional chauffeurs available right now to drive your car in Bengaluru.</p>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="nav-btn-secondary" onclick="window.switchAppView('screen-home')" style="background: #FFFFFF; border: 1.5px solid #E2E8F0; padding: 10px 18px; border-radius: var(--radius-full); font-weight: 700; cursor: pointer;">
+              <i class="fa-solid fa-sliders"></i> Modify Duration / Location
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Search Criteria Summary Bar -->
+        <div class="results-criteria-bar">
+          <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.92rem; font-weight: 800; color: #0F172A;">
+              <i class="fa-solid fa-location-dot" style="color: #0066FF; font-size: 1.15rem;"></i>
+              <span>Pickup: <b id="resultsPickupText" style="color: #0066FF;">Koramangala 4th Block, Bengaluru</b></span>
+            </div>
+            <div style="height: 20px; width: 1px; background: #CBD5E1;"></div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.92rem; font-weight: 800; color: #0F172A;">
+              <i class="fa-solid fa-clock" style="color: #10B981; font-size: 1.15rem;"></i>
+              <span id="resultsDurationText">2 Hours Duration (₹300)</span>
+            </div>
+            <div style="height: 20px; width: 1px; background: #CBD5E1;"></div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.92rem; font-weight: 800; color: #0F172A;">
+              <i class="fa-solid fa-city" style="color: #F59E0B; font-size: 1.15rem;"></i>
+              <span id="resultsTripTypeText">Within City Drive</span>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="badge badge-success" style="font-size: 0.85rem; padding: 8px 16px; border-radius: var(--radius-full);">
+              <i class="fa-solid fa-bolt"></i> Doorstep ETA: ~8 Minutes
+            </span>
+          </div>
+        </div>
+
+        <!-- Filter Chips Row -->
+        <div class="fleet-controls-bar" style="margin-bottom: 24px;">
+          <div class="fleet-pills-row">
+            <button class="cat-pill fleet-filter-pill active" onclick="customerCtrl.filterResultsCategory('all', this)">All Drivers (6)</button>
+            <button class="cat-pill fleet-filter-pill" onclick="customerCtrl.filterResultsCategory('Top Rated', this)">⭐ 4.9+ Rated (3)</button>
+            <button class="cat-pill fleet-filter-pill" onclick="customerCtrl.filterResultsCategory('Luxury', this)">👑 Luxury Specialists (2)</button>
+            <button class="cat-pill fleet-filter-pill" onclick="customerCtrl.filterResultsCategory('Outstation', this)">🛣️ Highway Veterans (2)</button>
+            <button class="cat-pill fleet-filter-pill" onclick="customerCtrl.filterResultsCategory('Corporate', this)">👔 Executive VIP (1)</button>
+          </div>
+        </div>
+
+        <!-- Split Grid: Left Drivers Cards, Right Live GPS Radar Map -->
+        <div class="results-split-grid">
+          <!-- Left Column: Matched Drivers Cards -->
+          <div style="display: flex; flex-direction: column; gap: 20px;" id="resultsDriverCardsList">
+            <!-- Dynamically populated by js/customer.js -->
+          </div>
+
+          <!-- Right Column: Live Nearby Drivers Map -->
+          <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 24px; padding: 22px; box-shadow: var(--shadow-md); position: sticky; top: 90px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 900; color: #0F172A; margin: 0;">Live Chauffeur Radar</h3>
+                <p style="font-size: 0.8rem; color: #64748B; margin: 2px 0 0;">Active drivers nearby in Koramangala & Indiranagar</p>
+              </div>
+              <span class="badge badge-accent" style="font-size: 0.78rem;"><i class="fa-solid fa-radar"></i> 6 Online</span>
+            </div>
+
+            <div style="height: 380px; border-radius: 16px; overflow: hidden; position: relative; border: 1.5px solid #E2E8F0;">
+              <div id="matchedDriversMap" style="width: 100%; height: 100%;"></div>
+            </div>
+
+            <div style="margin-top: 16px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 14px; font-size: 0.82rem; color: #475569; display: flex; align-items: flex-start; gap: 10px;">
+              <i class="fa-solid fa-shield-check" style="color: #10B981; font-size: 1.1rem; margin-top: 2px;"></i>
+              <div>
+                <b>100% Verified Chauffeurs Guarantee</b><br>
+                Commercial driving license verified, KYC + police background cleared, and trained for luxury & automatic vehicles.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==========================================================
+         VIEW 2: LIVE DRIVER TRACKING & ACTIVE TRIP PAGE (DESKTOP)
+         ========================================================== -->
+    <div id="liveTrackingDesktopView" style="display: none; padding: 40px 0; background: #F8FAFC;">
+      <div class="container">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <div>
+            <h2 style="font-size: 2.2rem; font-weight: 900; color: #0F172A; letter-spacing: -0.02em;">Live Driver Telemetry</h2>
+            <p style="color: #64748B; font-size: 1rem;">Tracking your professional chauffeur arriving at your doorstep in real-time</p>
+          </div>
+          <button class="nav-btn-secondary" onclick="window.switchAppView('screen-home')">
+            <i class="fa-solid fa-arrow-left"></i> Back to Homepage
+          </button>
+        </div>
+
+        <div class="tracking-web-container">
+          <!-- Left Map Column -->
+          <div class="tracking-map-col">
+            <div id="trackingMap" style="width: 100%; height: 100%;"></div>
+          </div>
+
+          <!-- Right Info Column -->
+          <div class="tracking-info-col">
+            
+            <!-- Step Status Timeline -->
+            <div class="status-timeline">
+              <div class="timeline-line">
+                <div class="timeline-line-progress" style="width: 50%;"></div>
+              </div>
+              <div class="timeline-step completed">
+                <div class="step-circle"><i class="fa-solid fa-check"></i></div>
+                <span class="step-label">Confirmed</span>
+              </div>
+              <div class="timeline-step completed">
+                <div class="step-circle"><i class="fa-solid fa-id-card"></i></div>
+                <span class="step-label">Driver Assigned</span>
+              </div>
+              <div class="timeline-step current" id="stepCarOnWay">
+                <div class="step-circle"><i class="fa-solid fa-person-walking"></i></div>
+                <span class="step-label">Driver En Route</span>
+              </div>
+              <div class="timeline-step" id="stepArrived">
+                <div class="step-circle"><i class="fa-solid fa-door-open"></i></div>
+                <span class="step-label">At Doorstep</span>
+              </div>
+              <div class="timeline-step" id="stepTripActive">
+                <div class="step-circle"><i class="fa-solid fa-car-side"></i></div>
+                <span class="step-label">Driving Your Car</span>
+              </div>
+            </div>
+
+            <!-- Driver Card -->
+            <div class="driver-profile-card">
+              <div class="driver-avatar-wrap">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Driver" class="driver-avatar" id="trackDriverAvatar">
+                <div class="driver-rating-pill">⭐ 4.9</div>
+              </div>
+
+              <div class="driver-info-col">
+                <div class="driver-name" id="trackDriverName">Rajesh Kumar</div>
+                <div class="driver-car-meta">
+                  <span id="trackDriverCar">Top Rated Chauffeur</span>
+                  <span class="plate-badge" id="trackDriverPlate">8 Yrs Exp</span>
+                </div>
+              </div>
+
+              <div class="driver-actions-col">
+                <button class="driver-action-btn" onclick="document.getElementById('callModalOverlay').classList.add('active')" title="Call Driver">
+                  <i class="fa-solid fa-phone"></i>
+                </button>
+                <button class="driver-action-btn" onclick="document.getElementById('chatModalOverlay').classList.add('active')" title="Chat">
+                  <i class="fa-solid fa-comment-dots"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Handover OTP -->
+            <div class="handover-otp-box">
+              <div>
+                <div class="otp-label">Driver Handover Start OTP</div>
+                <div style="font-size: 0.78rem; color: #64748B;">Share with driver when they arrive to start trip timer</div>
+              </div>
+              <div class="otp-number" id="trackOtpNumber">4821</div>
+            </div>
+
+            <!-- Active Countdown Clock (When Trip is Active) -->
+            <div id="activeHudCountdownBox" style="background: #0A0E1A; color: #fff; border-radius: 20px; padding: 22px; text-align: center; box-shadow: var(--shadow-md);">
+              <div style="font-size: 0.8rem; color: #38BDF8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Driver with you for</div>
+              <div class="countdown-main-timer" id="activeTripCountdownTimer" style="font-size: 2.6rem;">03:42:18</div>
+              <div style="font-size: 0.8rem; color: #94A3B8;">remaining in your booked session</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <button class="extend-btn" id="extendTripBtn">
+                <i class="fa-solid fa-clock-rotate-left"></i> Extend Driver Time
+              </button>
+              <button class="sos-btn" id="sosBtn">
+                <i class="fa-solid fa-triangle-exclamation"></i> 24x7 Helpline SOS
+              </button>
+            </div>
+
+            <button class="btn" id="simArrivedBtn" style="background: #0066FF; color: #fff; border: none; border-radius: 14px; padding: 14px; font-weight: 800; font-size: 0.95rem; cursor: pointer;">
+              <i class="fa-solid fa-forward-step"></i> Simulate Driver Arrived at Doorstep
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ==========================================================
+         VIEW 3: DRIVER PARTNER PORTAL (DESKTOP)
+         ========================================================== -->
+    <div id="driverAppView" style="display: none; padding: 40px 0; background: #F8FAFC;">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <div>
+            <h2 style="font-size: 2.2rem; font-weight: 900; color: #0F172A;">Driver Partner Operations Portal</h2>
+            <p style="color: #64748B;">Manage your availability, receive on-demand driving requests, and start trips</p>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border: 1.5px solid #CBD5E1; padding: 10px 20px; border-radius: var(--radius-full);">
+            <span id="driverStatusLabel" style="font-weight: 800; color: #10B981;">Online & Receiving Requests</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="driverOnlineToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="driver-portal-grid">
+          <!-- Driver Left Info & Earnings -->
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 24px; padding: 26px;">
+              <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2.5px solid #0066FF;">
+                <div>
+                  <h3 style="font-size: 1.25rem; font-weight: 900;">Rajesh Kumar</h3>
+                  <div style="font-size: 0.82rem; color: #64748B;">Specialty: All Manual & Automatic Cars</div>
+                  <div style="font-size: 0.8rem; font-weight: 800; color: #F59E0B; margin-top: 3px;">⭐ 4.9 Rating · 1,420 Completed Trips</div>
+                </div>
+              </div>
+
+              <div style="border-top: 1.5px solid #F1F5F9; padding-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div>
+                  <div style="font-size: 0.78rem; color: #64748B; font-weight: 700;">Today's Payout</div>
+                  <div style="font-size: 1.6rem; font-weight: 900; color: #10B981;" id="driverTodayEarnings">₹2,150</div>
+                </div>
+                <div>
+                  <div style="font-size: 0.78rem; color: #64748B; font-weight: 700;">Trips Done</div>
+                  <div style="font-size: 1.6rem; font-weight: 900; color: #0066FF;" id="driverTodayTrips">3</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trigger Demo Request -->
+            <button id="driverTriggerSimBtn" style="background: #0F172A; color: #fff; border: none; border-radius: 16px; padding: 16px; font-weight: 800; font-size: 0.95rem; cursor: pointer;">
+              <i class="fa-solid fa-bell"></i> Simulate Incoming Customer Driver Request
+            </button>
+          </div>
+
+          <!-- Driver Right Area: Radar / Navigation -->
+          <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 24px; padding: 26px;">
+            <div class="driver-radar-card" id="driverRadarCard" style="margin: 0; min-height: 340px; justify-content: center;">
+              <div class="radar-circle-outer">
+                <div class="radar-pulse-anim"></div>
+                <div class="radar-circle-inner"><i class="fa-solid fa-radar radar-center-icon"></i></div>
+              </div>
+              <h3 style="font-size: 1.3rem; font-weight: 900; margin-bottom: 6px;">Hotspot Radar Active: Koramangala</h3>
+              <p style="font-size: 0.9rem; color: #94A3B8; max-width: 420px;">Waiting for nearby customers who need a driver for their car. 15-second response window.</p>
+            </div>
+
+            <!-- Active Navigation Panel -->
+            <div id="driverActiveTripPanel" style="display: none; flex-direction: column; gap: 16px;">
+              <div style="height: 250px; border-radius: 18px; overflow: hidden;"><div id="driverNavMap"></div></div>
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="font-size: 0.78rem; font-weight: 800; color: #0066FF;">MEET CUSTOMER AT</div>
+                  <div style="font-size: 1.15rem; font-weight: 800;">Koramangala 4th Block, Bengaluru</div>
+                </div>
+                <div id="driverOtpSection" style="display: flex; gap: 8px;">
+                  <input type="text" id="driverOtpInput" placeholder="4-digit OTP" maxlength="4" style="width: 120px; border: 1.5px solid #CBD5E1; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1.15rem;">
+                  <button id="driverVerifyOtpBtn" style="background: #10B981; color: #fff; border: none; border-radius: 10px; padding: 0 18px; font-weight: 800; cursor: pointer;">Verify & Start Driving</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ==========================================================
+         VIEW 4: ADMIN CONTROL CENTER (DESKTOP)
+         ========================================================== -->
+    <div id="adminAppView" style="display: none; padding: 40px 0; background: #0A0E1A; color: #FFFFFF; min-height: 80vh;">
+      <div class="container" style="display: flex; flex-direction: column; gap: 30px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2 style="font-size: 2.3rem; font-weight: 900; letter-spacing: -0.02em;">Driver Network Admin Hub</h2>
+            <p style="color: #94A3B8; font-size: 1rem;">Dynamic hourly pricing configurator, driver verification, and live dispatch</p>
+          </div>
+          <button id="adminResetPricingBtn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: var(--radius-md); font-size: 0.88rem; font-weight: 700; cursor: pointer;">
+            <i class="fa-solid fa-rotate-left"></i> Reset Defaults (₹300/₹400)
+          </button>
+        </div>
+
+        <!-- KPI Metrics -->
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <span class="admin-stat-label">Total Platform Revenue</span>
+            <span class="admin-stat-num" id="adminStatRevenue">₹2,84,500</span>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-label">Completed Driver Trips</span>
+            <span class="admin-stat-num" id="adminStatBookings">348</span>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-label">Active Verified Chauffeurs</span>
+            <span class="admin-stat-num" id="adminStatFleet">6</span>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-label">Driver Quality Rating</span>
+            <span class="admin-stat-num" id="adminStatRating">⭐ 4.9</span>
+          </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="admin-nav-tabs">
+          <button class="admin-tab-btn active" data-tab="pricing">Hourly Pricing Matrix</button>
+          <button class="admin-tab-btn" data-tab="fleet">Chauffeur Team</button>
+          <button class="admin-tab-btn" data-tab="fleetMap">Live Telemetry Map</button>
+          <button class="admin-tab-btn" data-tab="coupons">Promo Code Manager</button>
+        </div>
+
+        <!-- Tab 1: Pricing Config -->
+        <div class="admin-card-panel admin-tab-content" id="adminTab_pricing">
+          <div>
+            <h3 style="font-size: 1.3rem; font-weight: 800;">Configurable Driver Duration Pricing</h3>
+            <p style="font-size: 0.88rem; color: #94A3B8; margin-top: 4px;">
+              Update 2h, 4h, 6h, and 8h driver rental rates for Within City and Outside City independently. Changes take effect on the customer website immediately.
+            </p>
+          </div>
+
+          <table class="pricing-table-matrix">
+            <thead>
+              <tr>
+                <th>Booking Duration</th>
+                <th>Within City Driver Package Rate (₹)</th>
+                <th>Outside City (Outstation Driver Rate) (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>2 Hours Duration</b></td>
+                <td><input type="number" class="price-edit-input" id="priceWithin_2" value="300"></td>
+                <td><input type="number" class="price-edit-input" id="priceOutside_2" value="400"></td>
+              </tr>
+              <tr>
+                <td><b>4 Hours Duration</b></td>
+                <td><input type="number" class="price-edit-input" id="priceWithin_4" value="600"></td>
+                <td><input type="number" class="price-edit-input" id="priceOutside_4" value="800"></td>
+              </tr>
+              <tr>
+                <td><b>6 Hours Duration</b></td>
+                <td><input type="number" class="price-edit-input" id="priceWithin_6" value="900"></td>
+                <td><input type="number" class="price-edit-input" id="priceOutside_6" value="1200"></td>
+              </tr>
+              <tr>
+                <td><b>8 Hours Duration</b></td>
+                <td><input type="number" class="price-edit-input" id="priceWithin_8" value="1200"></td>
+                <td><input type="number" class="price-edit-input" id="priceOutside_8" value="1600"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 18px;">
+            <div>
+              <label style="font-size: 0.82rem; color: #94A3B8; display: block; margin-bottom: 6px;">GST Tax Percentage (%)</label>
+              <input type="number" class="price-edit-input" id="priceGst" value="5" style="width: 100%;">
+            </div>
+            <div>
+              <label style="font-size: 0.82rem; color: #94A3B8; display: block; margin-bottom: 6px;">Safety & Background Verification Fee (₹)</label>
+              <input type="number" class="price-edit-input" id="priceInsurance" value="49" style="width: 100%;">
+            </div>
+          </div>
+
+          <button class="admin-save-btn" id="adminSavePricingBtn" style="padding: 13px 26px; font-size: 0.95rem;">
+            <i class="fa-solid fa-floppy-disk"></i> Save & Apply Driver Pricing
+          </button>
+        </div>
+
+        <!-- Tab 2: Chauffeur Team Management -->
+        <div class="admin-card-panel admin-tab-content" id="adminTab_fleet" style="display: none;">
+          <table class="fleet-admin-table">
+            <thead>
+              <tr>
+                <th>Chauffeur Name</th>
+                <th>Languages</th>
+                <th>Multiplier</th>
+                <th>Availability</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminFleetTableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Tab 3: Dispatcher Map -->
+        <div class="admin-card-panel admin-tab-content" id="adminTab_fleetMap" style="display: none;">
+          <div style="height: 450px; border-radius: 18px; overflow: hidden;"><div id="dispatcherMap"></div></div>
+        </div>
+
+        <!-- Tab 4: Promo Codes -->
+        <div class="admin-card-panel admin-tab-content" id="adminTab_coupons" style="display: none;">
+          <div style="display: flex; gap: 14px; align-items: flex-end;">
+            <div style="flex: 1;">
+              <label style="font-size: 0.82rem; color: #94A3B8; display: block; margin-bottom: 6px;">Coupon Code</label>
+              <input type="text" class="price-edit-input" id="newPromoCode" placeholder="e.g. FIRSTDRIVER" style="width: 100%; text-transform: uppercase;">
+            </div>
+            <div style="width: 160px;">
+              <label style="font-size: 0.82rem; color: #94A3B8; display: block; margin-bottom: 6px;">Discount (₹)</label>
+              <input type="number" class="price-edit-input" id="newPromoDiscount" placeholder="100" style="width: 100%;">
+            </div>
+            <button class="admin-save-btn" id="adminAddPromoBtn" style="padding: 11px 22px;">+ Add Coupon</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ==========================================================
+       MODALS: BOOKING SUMMARY, CALL, CHAT, SOS
+       ========================================================== -->
+
+  <!-- Booking & Checkout Modal Window -->
+  <div class="modal-overlay-web" id="bookingDrawerOverlay">
+    <div class="modal-window-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 1.45rem; font-weight: 900; color: #0F172A; letter-spacing: -0.02em;">Confirm Driver Booking</h3>
+        <button class="drawer-close-btn" onclick="customerCtrl.closeBookingDrawer()">&times;</button>
+      </div>
+
+      <!-- Selected Driver Card -->
+      <div class="selected-car-banner">
+        <img src="" id="drawerCarImg" alt="Selected Driver" class="banner-car-img">
+        <div class="banner-car-details">
+          <div class="banner-car-name" id="drawerCarName">Rajesh Kumar</div>
+          <div class="banner-car-sub" id="drawerCarSub">Top Rated Chauffeur · 8 Yrs Experience</div>
+        </div>
+      </div>
+
+      <!-- Fare Breakdown -->
+      <div class="fare-breakdown-card">
+        <div class="fare-row">
+          <span class="fare-label">Base Driver Rental Fee</span>
+          <span class="fare-val" id="drawerFareBase">₹600</span>
+        </div>
+        <div class="fare-row">
+          <span class="fare-label">Driver Doorstep Dispatch & Safety Fee</span>
+          <span class="fare-val" id="drawerFareInsurance">₹49</span>
+        </div>
+        <div class="fare-row" id="drawerFareDiscountRow" style="display: none; color: #10B981;">
+          <span class="fare-label">Promo Discount</span>
+          <span class="fare-val" id="drawerFareDiscount" style="color: #10B981;">-₹100</span>
+        </div>
+        <div class="fare-row">
+          <span class="fare-label">Taxes & GST (5%)</span>
+          <span class="fare-val" id="drawerFareGst">₹32</span>
+        </div>
+        <div class="fare-row total-row">
+          <span class="fare-label">Total Amount Payable</span>
+          <span class="fare-val" id="drawerFareTotal">₹681</span>
+        </div>
+      </div>
+
+      <!-- Promo Code Input -->
+      <div class="promo-input-wrap">
+        <input type="text" class="promo-input" id="promoCodeInput" placeholder="Enter coupon (e.g. FIRSTDRIVE)">
+        <button class="promo-apply-btn" id="applyPromoBtn">Apply</button>
+      </div>
+
+      <!-- Payment Method -->
+      <div>
+        <div style="font-size: 0.85rem; font-weight: 800; color: #0F172A; margin-bottom: 8px;">Select Payment Method</div>
+        <div class="payment-methods-grid">
+          <div class="pay-method-card active" data-method="UPI">
+            <i class="fa-solid fa-qrcode pay-icon"></i>
+            <span class="pay-label">UPI / GPay</span>
+          </div>
+          <div class="pay-method-card" data-method="Card">
+            <i class="fa-solid fa-credit-card pay-icon"></i>
+            <span class="pay-label">Debit/Credit Card</span>
+          </div>
+          <div class="pay-method-card" data-method="Cash">
+            <i class="fa-solid fa-money-bill-wave pay-icon" style="color: #10B981;"></i>
+            <span class="pay-label">Pay Driver directly</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Button -->
+      <button class="confirm-booking-btn" id="confirmBookingBtn">
+        <span>Confirm & Dispatch Driver</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Location Picker Modal -->
+  <div class="modal-overlay-web" id="locationModalOverlay">
+    <div class="modal-window-card" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 1.35rem; font-weight: 900;">Choose Driver Pickup Spot</h3>
+        <button class="drawer-close-btn" onclick="customerCtrl.closeLocationModal()">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 16px; padding: 14px; cursor: pointer;" onclick="customerCtrl.selectQuickLocation('Koramangala 4th Block, Bengaluru', 12.9352, 77.6245)">
+          <div style="font-weight: 800; color: #0F172A;"><i class="fa-solid fa-house" style="color: #0066FF; margin-right: 8px;"></i> Koramangala 4th Block</div>
+          <div style="font-size: 0.8rem; color: #64748B; margin-top: 2px;">Bengaluru, Karnataka · (High Demand Area)</div>
+        </div>
+
+        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 16px; padding: 14px; cursor: pointer;" onclick="customerCtrl.selectQuickLocation('Indiranagar 100ft Road, Bengaluru', 12.9716, 77.6412)">
+          <div style="font-weight: 800; color: #0F172A;"><i class="fa-solid fa-briefcase" style="color: #10B981; margin-right: 8px;"></i> Indiranagar 100ft Road</div>
+          <div style="font-size: 0.8rem; color: #64748B; margin-top: 2px;">Bengaluru, Karnataka</div>
+        </div>
+
+        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 16px; padding: 14px; cursor: pointer;" onclick="customerCtrl.selectQuickLocation('HSR Layout Sector 1, Bengaluru', 12.9121, 77.6446)">
+          <div style="font-weight: 800; color: #0F172A;"><i class="fa-solid fa-location-dot" style="color: #F59E0B; margin-right: 8px;"></i> HSR Layout Sector 1</div>
+          <div style="font-size: 0.8rem; color: #64748B; margin-top: 2px;">Bengaluru, Karnataka</div>
+        </div>
+
+        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 16px; padding: 14px; cursor: pointer;" onclick="customerCtrl.selectQuickLocation('Kempegowda Int. Airport (BLR), Bengaluru', 13.1986, 77.7066)">
+          <div style="font-weight: 800; color: #0F172A;"><i class="fa-solid fa-plane" style="color: #8B5CF6; margin-right: 8px;"></i> Bangalore Airport (BLR)</div>
+          <div style="font-size: 0.8rem; color: #64748B; margin-top: 2px;">Terminal 1 & 2 Pickups</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Extend Booking Modal -->
+  <div class="modal-overlay-web" id="extendModalOverlay">
+    <div class="modal-window-card" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 1.35rem; font-weight: 900;">Extend Driver Duration</h3>
+        <button class="drawer-close-btn" onclick="customerCtrl.closeExtendModal()">&times;</button>
+      </div>
+
+      <p style="font-size: 0.88rem; color: #64748B;">Keep the driver longer for your ongoing journey.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0;">
+        <button style="background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 16px; padding: 18px 8px; text-align: center; cursor: pointer;" onclick="customerCtrl.applyExtension(1)">
+          <div style="font-weight: 800; font-size: 1.15rem; color: #0F172A;">+1 Hour</div>
+          <div style="font-size: 0.85rem; color: #0066FF; font-weight: 800; margin-top: 4px;">+₹150</div>
+        </button>
+
+        <button style="background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 16px; padding: 18px 8px; text-align: center; cursor: pointer;" onclick="customerCtrl.applyExtension(2)">
+          <div style="font-weight: 800; font-size: 1.15rem; color: #0F172A;">+2 Hours</div>
+          <div style="font-size: 0.85rem; color: #0066FF; font-weight: 800; margin-top: 4px;">+₹300</div>
+        </button>
+
+        <button style="background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 16px; padding: 18px 8px; text-align: center; cursor: pointer;" onclick="customerCtrl.applyExtension(4)">
+          <div style="font-weight: 800; font-size: 1.15rem; color: #0F172A;">+4 Hours</div>
+          <div style="font-size: 0.85rem; color: #0066FF; font-weight: 800; margin-top: 4px;">+₹600</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roadside Assistance / SOS Modal -->
+  <div class="modal-overlay-web" id="sosModalOverlay">
+    <div class="modal-window-card" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 1.35rem; font-weight: 900; color: #DC2626;"><i class="fa-solid fa-triangle-exclamation"></i> 24x7 Roadside & Driver Helpline</h3>
+        <button class="drawer-close-btn" onclick="customerCtrl.closeSosModal()">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+        <button style="background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 16px; padding: 16px; text-align: left; cursor: pointer;" onclick="showToast('DriverBee Safety Agent alerted to your live ride location', 'danger'); customerCtrl.closeSosModal();">
+          <div style="font-weight: 800; color: #DC2626; font-size: 1rem;">🚨 Emergency SOS / Immediate Assistance</div>
+          <div style="font-size: 0.8rem; color: #7F1D1D;">Connects to safety command agent immediately</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Call Simulation Modal -->
+  <div class="modal-overlay-web" id="callModalOverlay">
+    <div class="modal-window-card" style="max-width: 400px; text-align: center; align-items: center;">
+      <div style="width: 76px; height: 76px; border-radius: 50%; background: #0066FF; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 10px auto; box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);">
+        <i class="fa-solid fa-phone"></i>
+      </div>
+      <h3 style="font-size: 1.4rem; font-weight: 900;">Rajesh Kumar (Driver)</h3>
+      <p style="font-size: 0.85rem; color: #64748B; margin-bottom: 20px;">Connecting secure encrypted in-app call...</p>
+      <button style="background: #EF4444; color: #fff; border: none; border-radius: var(--radius-full); padding: 12px 36px; font-weight: 800; cursor: pointer;" onclick="document.getElementById('callModalOverlay').classList.remove('active')">
+        End Call
+      </button>
+    </div>
+  </div>
+
+  <!-- Chat Modal -->
+  <div class="modal-overlay-web" id="chatModalOverlay">
+    <div class="modal-window-card" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 1.25rem; font-weight: 800;">Chat with Rajesh (Driver)</h3>
+        <button class="drawer-close-btn" onclick="document.getElementById('chatModalOverlay').classList.remove('active')">&times;</button>
+      </div>
+
+      <div style="background: #F8FAFC; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-height: 200px;">
+        <div style="background: #E2E8F0; padding: 10px 14px; border-radius: 14px 14px 14px 0; max-width: 80%; font-size: 0.88rem;">
+          Hello sir! I am on the way to drive your car. Reaching your location in ~6 mins.
+        </div>
+        <div style="background: #0066FF; color: #fff; padding: 10px 14px; border-radius: 14px 14px 0 14px; max-width: 80%; align-self: flex-end; font-size: 0.88rem;">
+          Great, my car is parked near Gate 2.
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <input type="text" placeholder="Type a message to driver..." style="flex: 1; border: 1.5px solid #CBD5E1; border-radius: 12px; padding: 12px 16px; font-size: 0.92rem; outline: none;">
+        <button style="background: #0F172A; color: #fff; border: none; border-radius: 12px; padding: 0 20px; font-weight: 700; cursor: pointer;" onclick="showToast('Message sent to driver', 'success')">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Driver Incoming Ride Request Modal -->
+  <div class="modal-overlay-web" id="driverIncomingModal">
+    <div class="modal-window-card" style="max-width: 480px;">
+      <div class="request-timer-bar"><div class="request-timer-fill" id="requestTimerFill"></div></div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span class="badge badge-accent">New Driver Request</span>
+          <h3 style="font-size: 1.4rem; font-weight: 900; margin-top: 4px;">₹600 · 4 Hours Drive</h3>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-weight: 800; color: #10B981;">1.2 km away</div>
+          <div style="font-size: 0.78rem; color: #64748B;">Within City</div>
+        </div>
+      </div>
+
+      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 16px;">
+        <div style="font-size: 0.78rem; color: #64748B; font-weight: 700;">CUSTOMER LOCATION</div>
+        <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin-top: 2px;">Koramangala 4th Block, Bengaluru</div>
+        <div style="font-size: 0.85rem; color: #0066FF; margin-top: 4px;">Customer Car: Hyundai Creta (Automatic)</div>
+      </div>
+
+      <div class="req-action-grid">
+        <button class="req-reject-btn" id="driverRejectReqBtn">Decline</button>
+        <button class="req-accept-btn" id="driverAcceptReqBtn">Accept Drive</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Website Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand-col">
+          <a href="#hero" class="site-brand" style="color: #fff;">
+            <div class="brand-icon-box" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+              <i class="fa-solid fa-bolt" style="color: #FFFFFF;"></i>
+            </div>
+            <span>Driver<span style="color: #F59E0B;">Bee</span></span>
+          </a>
+          <p>DriverBee is the premier on-demand driver and personal chauffeur platform. Book a verified driver to drive your car anywhere for fixed hourly packages (2h, 4h, 6h, 8h).</p>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Driver Packages</h4>
+          <ul class="footer-links">
+            <li><a href="#pricingMatrixSection">2 Hours Driver (₹300)</a></li>
+            <li><a href="#pricingMatrixSection">4 Hours Driver (₹600)</a></li>
+            <li><a href="#pricingMatrixSection">6 Hours Driver (₹900)</a></li>
+            <li><a href="#pricingMatrixSection">8 Hours Full Day (₹1,200)</a></li>
+            <li><a href="#pricingMatrixSection">Outstation Highway Driver (₹400+)</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Chauffeur Categories</h4>
+          <ul class="footer-links">
+            <li><a href="#fleetShowcase">Top Rated City Drivers</a></li>
+            <li><a href="#fleetShowcase">Luxury Car Chauffeurs</a></li>
+            <li><a href="#fleetShowcase">Outstation Highway Drivers</a></li>
+            <li><a href="#fleetShowcase">Party Night Safe Chauffeurs</a></li>
+            <li><a href="#fleetShowcase">Corporate Executive Chauffeurs</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">24x7 DriverBee Support</h4>
+          <p style="font-size: 0.85rem; margin-bottom: 12px;">Need a driver immediately or have corporate requirements?</p>
+          <div style="color: #fff; font-weight: 800; font-size: 1.15rem; margin-bottom: 4px;">1800-890-BEE</div>
+          <div style="font-size: 0.82rem; color: #94A3B8;">support@driverbee.com</div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 DriverBee Technologies Inc. All rights reserved.</div>
+        <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+          <a href="javascript:void(0)" onclick="window.switchAppView('customer'); document.getElementById('driverAppView').style.display='block'; document.getElementById('customerAppView').style.display='none'; document.getElementById('adminAppView').style.display='none'; window.scrollTo({top:0, behavior:'smooth'});" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Driver Partner Portal</a>
+          <a href="javascript:void(0)" onclick="window.switchAppView('customer'); document.getElementById('adminAppView').style.display='block'; document.getElementById('customerAppView').style.display='none'; document.getElementById('driverAppView').style.display='none'; window.scrollTo({top:0, behavior:'smooth'});" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Admin Control Hub</a>
+          <a href="javascript:void(0)" style="color: #94A3B8; text-decoration: none;">Privacy Policy</a>
+          <a href="javascript:void(0)" style="color: #94A3B8; text-decoration: none;">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Leaflet Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- App JavaScript Modules -->
+  <script src="js/state.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/customer.js"></script>
+  <script src="js/driver.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
