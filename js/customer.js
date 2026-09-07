@@ -102,16 +102,16 @@ class CustomerController {
           navigator.geolocation.getCurrentPosition(
             (pos) => {
               const coords = [pos.coords.latitude, pos.coords.longitude];
-              const addr = 'Koramangala 4th Block, Bengaluru (GPS Verified)';
+              const addr = 'Benz Circle, Vijayawada (GPS Verified)';
               window.appState.setSelection({ pickupAddress: addr, pickupCoords: coords });
               this.updateLocationDisplays(addr);
               window.showToast('Location set! Nearest drivers located.', 'success');
             },
             () => {
-              const addr = 'Koramangala 5th Block, Bengaluru';
-              window.appState.setSelection({ pickupAddress: addr, pickupCoords: [12.9352, 77.6245] });
+              const addr = 'Benz Circle, Vijayawada';
+              window.appState.setSelection({ pickupAddress: addr, pickupCoords: [16.5015, 80.6534] });
               this.updateLocationDisplays(addr);
-              window.showToast('GPS verified: Koramangala, Bengaluru', 'success');
+              window.showToast('GPS verified: Benz Circle, Vijayawada', 'success');
             }
           );
         }
@@ -205,7 +205,7 @@ class CustomerController {
     const tripType = updatedState.selection.tripType;
     const price = window.appState.getDurationPrice(duration, tripType);
 
-    if (locText) locText.textContent = updatedState.selection.pickupAddress.split(',')[0] + ', Bengaluru';
+    if (locText) locText.textContent = updatedState.selection.pickupAddress.split(',')[0] + ', Vijayawada';
     if (durText) durText.textContent = `${duration} Hours Duration (₹${price.toLocaleString('en-IN')})`;
     if (tripText) tripText.textContent = tripType === 'outside' ? 'Outside City (Outstation)' : 'Within City Drive';
 

@@ -174,7 +174,7 @@ class MapManager {
       this.dispatcherMap = null;
     }
 
-    const center = [12.9380, 77.6300];
+    const center = [16.5062, 80.6480];
     this.dispatcherMap = L.map(containerId, {
       center: center,
       zoom: 13,
@@ -215,7 +215,7 @@ class MapManager {
       this.driverNavMap = null;
     }
 
-    const userPos = [12.9352, 77.6245];
+    const userPos = [16.5015, 80.6534];
     this.driverNavMap = L.map(containerId, {
       center: userPos,
       zoom: 15,

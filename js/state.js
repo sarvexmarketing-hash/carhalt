@@ -3,7 +3,7 @@
    Professional driver rental on demand for fixed durations (2h, 4h, 6h, 8h)
    ========================================================================== */
 
-const STORAGE_KEY = 'driverbee_on_demand_state_v3';
+const STORAGE_KEY = 'driverbee_on_demand_state_v5';
 
 const DEFAULT_STATE = {
   // Configurable Pricing Matrix for Driver Services
@@ -36,16 +36,16 @@ const DEFAULT_STATE = {
     email: 'javed@example.com',
     walletBalance: 2450,
     savedLocations: [
-      { id: 'loc_1', label: 'Home', address: 'Koramangala 4th Block, Bengaluru', lat: 12.9352, lng: 77.6245 },
-      { id: 'loc_2', label: 'Work', address: 'Indiranagar 100ft Road, Bengaluru', lat: 12.9716, lng: 77.6412 },
-      { id: 'loc_3', label: 'Airport', address: 'Kempegowda Int. Airport, Bengaluru', lat: 13.1986, lng: 77.7066 }
+      { id: 'loc_1', label: 'Home', address: 'Benz Circle, Vijayawada', lat: 16.5015, lng: 80.6534 },
+      { id: 'loc_2', label: 'Work', address: 'MG Road (Bandar Road), Vijayawada', lat: 16.5085, lng: 80.6385 },
+      { id: 'loc_3', label: 'Airport', address: 'Vijayawada Airport (Gannavaram)', lat: 16.5304, lng: 80.7968 }
     ]
   },
 
   // Selected Booking Preferences
   selection: {
-    pickupAddress: 'Koramangala 4th Block, Bengaluru',
-    pickupCoords: [12.9352, 77.6245],
+    pickupAddress: 'Benz Circle, Vijayawada',
+    pickupCoords: [16.5015, 80.6534],
     tripType: 'within', // 'within' | 'outside'
     destinationAddress: '',
     durationHours: 2,
@@ -68,11 +68,11 @@ const DEFAULT_STATE = {
       etaMins: 6,
       distanceKm: 1.2,
       phone: '+91 98450 12345',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-      languages: ['English', 'Hindi', 'Kannada'],
+      avatar: 'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=300&h=300&q=80',
+      languages: ['Telugu', 'English', 'Hindi'],
       badge: 'Uniformed & Verified',
       isOnline: true,
-      currentLocation: [12.9385, 77.6310],
+      currentLocation: [16.5040, 80.6510],
       priceMultiplier: 1.0,
       verifiedKYC: true
     },
@@ -87,11 +87,11 @@ const DEFAULT_STATE = {
       etaMins: 8,
       distanceKm: 1.8,
       phone: '+91 98765 43210',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
-      languages: ['English', 'Hindi'],
+      avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=300&h=300&q=80',
+      languages: ['English', 'Hindi', 'Telugu'],
       badge: 'Executive Driver',
       isOnline: true,
-      currentLocation: [12.9310, 77.6210],
+      currentLocation: [16.4990, 80.6480],
       priceMultiplier: 1.1,
       verifiedKYC: true
     },
@@ -106,11 +106,11 @@ const DEFAULT_STATE = {
       etaMins: 7,
       distanceKm: 1.5,
       phone: '+91 99001 55432',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
-      languages: ['Kannada', 'Tamil', 'Telugu', 'Hindi'],
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&h=300&q=80',
+      languages: ['Telugu', 'Tamil', 'Hindi', 'English'],
       badge: 'Highway Veteran',
       isOnline: true,
-      currentLocation: [12.9412, 77.6280],
+      currentLocation: [16.5120, 80.6550],
       priceMultiplier: 1.0,
       verifiedKYC: true
     },
@@ -125,11 +125,11 @@ const DEFAULT_STATE = {
       etaMins: 10,
       distanceKm: 2.2,
       phone: '+91 98800 11223',
-      avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80',
-      languages: ['Hindi', 'English'],
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&h=300&q=80',
+      languages: ['Hindi', 'English', 'Telugu'],
       badge: 'Quick Dispatched',
       isOnline: true,
-      currentLocation: [12.9280, 77.6350],
+      currentLocation: [16.4950, 80.6600],
       priceMultiplier: 1.0,
       verifiedKYC: true
     },
@@ -144,11 +144,11 @@ const DEFAULT_STATE = {
       etaMins: 11,
       distanceKm: 2.6,
       phone: '+91 99440 33445',
-      avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=300&q=80',
-      languages: ['English', 'Kannada', 'Hindi'],
+      avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=300&h=300&q=80',
+      languages: ['English', 'Telugu', 'Hindi'],
       badge: 'VIP White Glove',
       isOnline: true,
-      currentLocation: [12.9450, 77.6220],
+      currentLocation: [16.5150, 80.6450],
       priceMultiplier: 1.2,
       verifiedKYC: true
     },
@@ -163,11 +163,11 @@ const DEFAULT_STATE = {
       etaMins: 9,
       distanceKm: 2.0,
       phone: '+91 97410 55667',
-      avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80',
-      languages: ['English', 'Malayalam', 'Kannada'],
+      avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&h=300&q=80',
+      languages: ['English', 'Malayalam', 'Telugu'],
       badge: 'EV Certified',
       isOnline: true,
-      currentLocation: [12.9320, 77.6400],
+      currentLocation: [16.5020, 80.6620],
       priceMultiplier: 1.0,
       verifiedKYC: true
     }
@@ -186,7 +186,7 @@ const DEFAULT_STATE = {
       tripType: 'Within City',
       totalFare: 600,
       status: 'Completed',
-      pickup: 'Indiranagar 100ft Rd',
+      pickup: 'MG Road, Vijayawada',
       ratingGiven: 5
     }
   ],
