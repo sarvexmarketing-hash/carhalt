@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 74" fill="none">
+  <!-- Main Brand Name -->
+  <text x="0" y="40" font-family="'Plus Jakarta Sans', 'Inter', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="900" font-size="38" letter-spacing="-0.5px" fill="#FFFFFF">DRIVER<tspan fill="#F59E0B">BEE</tspan></text>
+  
+  <!-- Steering Wheel Emblem -->
+  <g transform="translate(238, 8)" fill="#FFFFFF">
+    <!-- Outer Rim -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M18 36C27.9411 36 36 27.9411 36 18C36 8.05887 27.9411 0 18 0C8.05887 0 0 8.05887 0 18C0 27.9411 8.05887 36 18 36ZM18 30.5C24.9036 30.5 30.5 24.9036 30.5 18C30.5 11.0964 24.9036 5.5 18 5.5C11.0964 5.5 5.5 11.0964 5.5 18C5.5 24.9036 11.0964 30.5 18 30.5Z"/>
+    <!-- Center Hub -->
+    <circle cx="18" cy="18" r="6"/>
+    <!-- Horizontal Left Spoke -->
+    <path d="M5 16H13V20H5V16Z"/>
+    <!-- Horizontal Right Spoke -->
+    <path d="M23 16H31V20H23V16Z"/>
+    <!-- Vertical Bottom Spoke -->
+    <path d="M16 23H20V31H16V23Z"/>
+  </g>
+
+  <!-- Tagline below logo -->
+  <text x="2" y="66" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-weight="700" font-size="11" letter-spacing="2.2px" fill="#94A3B8">A DRIVER WHEN YOU NEED ONE</text>
+</svg>

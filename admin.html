@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriverBee Admin Command Center | Live Fleet Dispatch, Bookings & Users</title>
+  <meta name="description" content="DriverBee Admin Mission Control - Complete real-time visibility into all bookings from places to places, active drivers, customer accounts, and dynamic pricing.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Leaflet Maps CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <link rel="icon" type="image/svg+xml" href="assets/driverbee-icon.svg">
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="css/main.css?v=11">
+  <link rel="stylesheet" href="css/components.css?v=11">
+
+  <style>
+    :root {
+      --admin-bg: #F8FAFC;
+      --admin-card-bg: #FFFFFF;
+      --admin-card-border: #E2E8F0;
+      --admin-card-hover: #F1F5F9;
+      --admin-accent: #0066FF;
+      --admin-accent-glow: rgba(0, 102, 255, 0.15);
+      --admin-text-main: #0F172A;
+      --admin-text-muted: #64748B;
+    }
+
+    body {
+      background-color: var(--admin-bg);
+      color: var(--admin-text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .admin-header {
+      background: #FFFFFF;
+      border-bottom: 1px solid #E2E8F0;
+      padding: 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    .admin-nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .admin-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 24px 0 28px;
+    }
+
+    .admin-kpi-card {
+      background: var(--admin-card-bg);
+      border: 1px solid var(--admin-card-border);
+      border-radius: 20px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .admin-kpi-card:hover {
+      border-color: #CBD5E1;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .admin-kpi-val {
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #0F172A;
+    }
+
+    .admin-kpi-lbl {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--admin-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .admin-tab-nav {
+      display: flex;
+      gap: 8px;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      padding: 6px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .admin-tab-btn {
+      background: transparent;
+      border: none;
+      color: #64748B;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .admin-tab-btn:hover {
+      color: #0F172A;
+      background: #F1F5F9;
+    }
+
+    .admin-tab-btn.active {
+      background: #0066FF;
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(0, 102, 255, 0.25);
+    }
+
+    .admin-table-container {
+      background: var(--admin-card-bg);
+      border: 1px solid var(--admin-card-border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+    }
+
+    .admin-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .admin-data-table th {
+      background: #F8FAFC;
+      color: #475569;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 16px 20px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .admin-data-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid #F1F5F9;
+      font-size: 0.92rem;
+      color: #1E293B;
+      vertical-align: middle;
+      background: #FFFFFF;
+    }
+
+    .admin-data-table tr:hover td {
+      background: #F8FAFC;
+    }
+
+    .status-badge-admin {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .status-active { background: #DCFCE7; color: #15803D; border: 1px solid #86EFAC; }
+    .status-searching { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
+    .status-accepted { background: #DBEAFE; color: #1D4ED8; border: 1px solid #93C5FD; }
+    .status-completed { background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
+    .status-cancelled { background: #FEE2E2; color: #B91C1C; border: 1px solid #FCA5A5; }
+
+    .admin-search-input {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      color: #0F172A;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .admin-search-input:focus {
+      border-color: #0066FF;
+      box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.15);
+    }
+
+    .route-places-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .route-point {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+
+    .modal-admin-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .modal-admin-overlay.active {
+      display: flex;
+    }
+
+    .modal-admin-card {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 560px;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      color: #0F172A;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Sticky Header -->
+  <header class="admin-header">
+    <div class="container admin-nav-container">
+      
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <a href="admin.html" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+          <img src="assets/driverbee-logo.svg" alt="DriverBee" style="height: 36px;">
+          <span style="background: linear-gradient(135deg, #0066FF, #00C6FF); color: #fff; font-size: 0.72rem; font-weight: 900; padding: 4px 9px; border-radius: 6px; letter-spacing: 0.05em;">ADMIN MISSION CONTROL</span>
+        </a>
+
+        <div style="display: flex; align-items: center; gap: 8px; background: #DCFCE7; border: 1px solid #86EFAC; padding: 5px 14px; border-radius: 9999px;">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #16A34A; box-shadow: 0 0 8px #16A34A;"></span>
+          <span style="font-size: 0.75rem; font-weight: 800; color: #15803D;">LIVE DISPATCH: VIJAYAWADA</span>
+        </div>
+      </div>
+
+      <!-- Header Actions -->
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="index.html" target="_blank" style="background: #FFFFFF; border: 1.5px solid #E2E8F0; color: #0066FF; padding: 9px 16px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Customer Portal
+        </a>
+
+        <a href="driver.html" target="_blank" style="background: #FFFFFF; border: 1.5px solid #E2E8F0; color: #D97706; padding: 9px 16px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+          <i class="fa-solid fa-id-card"></i> Driver Portal
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Admin Main Dashboard Body -->
+  <main class="container" style="padding: 20px 0 60px;">
+
+    <!-- Top KPI Cards -->
+    <div class="admin-kpi-grid">
+      <div class="admin-kpi-card" style="border-left: 4px solid #10B981;">
+        <div class="admin-kpi-lbl">Active Drives in Transit</div>
+        <div class="admin-kpi-val" id="kpiActiveTrips" style="color: #10B981;">1</div>
+        <div style="font-size: 0.78rem; color: #94A3B8;"><i class="fa-solid fa-route"></i> Live GPS navigation active</div>
+      </div>
+
+      <div class="admin-kpi-card" style="border-left: 4px solid #0066FF;">
+        <div class="admin-kpi-lbl">Total Dispatched Trips</div>
+        <div class="admin-kpi-val" id="kpiTotalBookings">352</div>
+        <div style="font-size: 0.78rem; color: #94A3B8;"><i class="fa-solid fa-calendar-check"></i> 98.4% fulfillment rate</div>
+      </div>
+
+      <div class="admin-kpi-card" style="border-left: 4px solid #F59E0B;">
+        <div class="admin-kpi-lbl">Active Drivers Online</div>
+        <div class="admin-kpi-val" id="kpiOnlineDrivers" style="color: #F59E0B;">6 / 6</div>
+        <div style="font-size: 0.78rem; color: #94A3B8;"><i class="fa-solid fa-user-check"></i> 100% Police Verified</div>
+      </div>
+
+      <div class="admin-kpi-card" style="border-left: 4px solid #8B5CF6;">
+        <div class="admin-kpi-lbl">Gross Platform GMV</div>
+        <div class="admin-kpi-val" id="kpiGrossRevenue">₹2,86,900</div>
+        <div style="font-size: 0.78rem; color: #94A3B8;"><i class="fa-solid fa-wallet"></i> Platform 20% | Driver 80%</div>
+      </div>
+
+      <div class="admin-kpi-card" style="border-left: 4px solid #EC4899;">
+        <div class="admin-kpi-lbl">Registered Customers</div>
+        <div class="admin-kpi-val" id="kpiTotalUsers">5</div>
+        <div style="font-size: 0.78rem; color: #94A3B8;"><i class="fa-solid fa-users"></i> Vijayawada Hub</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="admin-tab-nav">
+      <button class="admin-tab-btn active" data-tab="liveBookings">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Live Bookings & Places-to-Places</span>
+      </button>
+
+      <button class="admin-tab-btn" data-tab="radarMap">
+        <i class="fa-solid fa-map-location-dot"></i>
+        <span>Live GPS Radar & Operations Map</span>
+      </button>
+
+      <button class="admin-tab-btn" data-tab="driversFleet">
+        <i class="fa-solid fa-id-card-clip"></i>
+        <span>Driver Fleet Management</span>
+      </button>
+
+      <button class="admin-tab-btn" data-tab="customersList">
+        <i class="fa-solid fa-users-gear"></i>
+        <span>Customer Directory & Users</span>
+      </button>
+
+      <button class="admin-tab-btn" data-tab="pricingEngine">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Hourly Pricing Matrix & Hotspots</span>
+      </button>
+    </div>
+
+    <!-- =========================================================================
+         TAB 1: LIVE BOOKINGS & PLACES-TO-PLACES DISPATCH
+         ========================================================================= -->
+    <section class="admin-tab-pane" id="pane_liveBookings">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <input type="text" id="bookingSearchInput" class="admin-search-input" placeholder="Search by customer, driver, or place..." style="width: 340px;" oninput="adminCtrl.filterBookingsTable()">
+          <select id="bookingStatusFilter" class="admin-search-input" onchange="adminCtrl.filterBookingsTable()">
+            <option value="all">All Booking Statuses</option>
+            <option value="trip_active">🟢 Active in Transit</option>
+            <option value="searching">🟡 Searching / Dispatching</option>
+            <option value="driver_accepted">🔵 Driver Accepted</option>
+            <option value="completed">⚪ Completed</option>
+            <option value="cancelled">🔴 Cancelled</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; background: #F1F5F9; border: 1px solid #E2E8F0; padding: 6px 14px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; color: #475569;">
+          <i class="fa-solid fa-rotate fa-spin" style="color: #0066FF;"></i> Real-Time Live Sync Active
+        </div>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Customer & Vehicle</th>
+              <th>Assigned Driver</th>
+              <th>Route (From Place ➡️ To Place)</th>
+              <th>Duration & Type</th>
+              <th>Fare (Driver / Net)</th>
+              <th>Live Status</th>
+              <th style="text-align: right;">Operations</th>
+            </tr>
+          </thead>
+          <tbody id="adminBookingsTableBody">
+            <!-- Populated via admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 2: LIVE GPS RADAR & OPERATIONS MAP
+         ========================================================================= -->
+    <section class="admin-tab-pane" id="pane_radarMap" style="display: none;">
+      <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px;">
+        
+        <div style="background: var(--admin-card-bg); border: 1px solid var(--admin-card-border); border-radius: 20px; padding: 22px; box-shadow: 0 2px 12px rgba(0,0,0,0.03);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+              <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0; color: #0F172A;">Live Fleet & Active Routes Radar</h3>
+              <p style="font-size: 0.82rem; color: #64748B; margin: 4px 0 0;">Real-time GPS coordinates of active drivers and ongoing passenger routes in Vijayawada</p>
+            </div>
+            <span class="status-badge-admin status-active"><i class="fa-solid fa-satellite-dish"></i> GPS STREAM LIVE</span>
+          </div>
+
+          <div style="height: 520px; border-radius: 16px; overflow: hidden; border: 1.5px solid #E2E8F0;">
+            <div id="adminDispatcherLiveMap" style="width: 100%; height: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- Right Side Live Dispatch Stream Feed -->
+        <div style="background: var(--admin-card-bg); border: 1px solid var(--admin-card-border); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.03);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="font-size: 1.05rem; font-weight: 900; margin: 0; color: #0F172A;">Live Activity Stream</h4>
+            <span style="font-size: 0.75rem; color: #64748B;"><i class="fa-solid fa-arrows-rotate fa-spin"></i> Auto-synced</span>
+          </div>
+
+          <div id="adminLiveEventFeed" style="display: flex; flex-direction: column; gap: 12px; max-height: 480px; overflow-y: auto;">
+            <!-- Populated via admin.js -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 3: DRIVERS FLEET DIRECTORY
+         ========================================================================= -->
+    <section class="admin-tab-pane" id="pane_driversFleet" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 14px;">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <input type="text" id="driverSearchInput" class="admin-search-input" placeholder="Search driver by name, specialty, or phone..." style="width: 320px;" oninput="adminCtrl.filterDriversTable()">
+        </div>
+
+        <button onclick="adminCtrl.openAddDriverModal()" style="background: #10B981; color: #FFFFFF; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);">
+          <i class="fa-solid fa-user-plus"></i> Onboard New Driver Partner
+        </button>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Driver Partner</th>
+              <th>Vehicle Specialty</th>
+              <th>Experience & Rating</th>
+              <th>Phone & Languages</th>
+              <th>Completed Trips</th>
+              <th>Today's Earnings</th>
+              <th>Police & KYC</th>
+              <th>Live Status</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminDriversTableBody">
+            <!-- Populated via admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 4: CUSTOMERS & USERS DIRECTORY
+         ========================================================================= -->
+    <section class="admin-tab-pane" id="pane_customersList" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 14px;">
+        <input type="text" id="userSearchInput" class="admin-search-input" placeholder="Search customer by name, email, or phone..." style="width: 320px;" oninput="adminCtrl.filterUsersTable()">
+        
+        <button onclick="adminCtrl.openAddUserModal()" style="background: #0066FF; color: #FFFFFF; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(0, 102, 255, 0.25);">
+          <i class="fa-solid fa-user-plus"></i> Register Customer Account
+        </button>
+      </div>
+
+      <div class="admin-table-container">
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Customer Name</th>
+              <th>Contact Details</th>
+              <th>Registered Personal Cars</th>
+              <th>Total Drives Booked</th>
+              <th>Total Platform Spend</th>
+              <th>Preferred Driver</th>
+              <th>Membership Tier</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminUsersTableBody">
+            <!-- Populated via admin.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 5: HOURLY PRICING MATRIX & HOTSPOTS
+         ========================================================================= -->
+    <section class="admin-tab-pane" id="pane_pricingEngine" style="display: none;">
+      <div style="background: var(--admin-card-bg); border: 1px solid var(--admin-card-border); border-radius: 20px; padding: 28px; max-width: 800px; box-shadow: 0 2px 12px rgba(0,0,0,0.03);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div>
+            <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0; color: #0F172A;">Hourly Driver Rental Pricing Matrix</h3>
+            <p style="font-size: 0.85rem; color: #64748B; margin: 4px 0 0;">Configurable rates for 2h, 4h, 6h, and 8h packages for Within City and Outside City independently.</p>
+          </div>
+          <button onclick="adminCtrl.resetPricingDefaults()" style="background: #F1F5F9; border: 1px solid #CBD5E1; color: #475569; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+            Reset Defaults (₹300 / ₹400)
+          </button>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+          <thead>
+            <tr style="border-bottom: 1.5px solid #E2E8F0; background: #F8FAFC;">
+              <th style="padding: 12px 16px; color: #475569; font-size: 0.82rem; font-weight: 800; text-align: left;">PACKAGE DURATION</th>
+              <th style="padding: 12px 16px; color: #0066FF; font-size: 0.82rem; font-weight: 800; text-align: left;">WITHIN CITY RATE (₹)</th>
+              <th style="padding: 12px 16px; color: #D97706; font-size: 0.82rem; font-weight: 800; text-align: left;">OUTSIDE CITY (OUTSTATION) RATE (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #F1F5F9;">
+              <td style="padding: 14px 16px; font-weight: 800; color: #0F172A;">2 Hours Package</td>
+              <td style="padding: 14px 16px;"><input type="number" id="admPriceWithin_2" class="admin-search-input" style="width: 140px;" value="300"></td>
+              <td style="padding: 14px 16px;"><input type="number" id="admPriceOutside_2" class="admin-search-input" style="width: 140px;" value="400"></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #F1F5F9;">
+              <td style="padding: 14px 16px; font-weight: 800; color: #0F172A;">4 Hours Package (Popular)</td>
+              <td style="padding: 14px 16px;"><input type="number" id="admPriceWithin_4" class="admin-search-input" style="width: 140px;" value="600"></td>
+              <td style="padding: 14px 16px;"><input type="number" id="admPriceOutside_4" class="admin-search-input" style="width: 140px;" value="800"></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #F1F5F9;">
+              <td style="padding: 14px 16px; font-weight: 800; color: #0F172A;">6 Hours Package</td>
+              <td style="padding: 14px 16px;"><input type="number" id="admPriceWithin_6" class="admin-search-input" style="width: 140px;" value="900"></td>
+              <td style="padding: 14px 16px;"><input type="number" id="admPriceOutside_6" class="admin-search-input" style="width: 140px;" value="1200"></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #F1F5F9;">
+              <td style="padding: 14px 16px; font-weight: 800; color: #0F172A;">8 Hours Full Day Package</td>
+              <td style="padding: 14px 16px;"><input type="number" id="admPriceWithin_8" class="admin-search-input" style="width: 140px;" value="1200"></td>
+              <td style="padding: 14px 16px;"><input type="number" id="admPriceOutside_8" class="admin-search-input" style="width: 140px;" value="1600"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+          <div>
+            <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">GST Tax Rate (%)</label>
+            <input type="number" id="admPriceGst" class="admin-search-input" style="width: 100%;" value="5">
+          </div>
+          <div>
+            <label style="font-size: 0.8rem; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">Safety & Verification Fee (₹)</label>
+            <input type="number" id="admPriceInsurance" class="admin-search-input" style="width: 100%;" value="49">
+          </div>
+        </div>
+
+        <button onclick="adminCtrl.savePricingMatrix()" style="background: #0066FF; color: #FFFFFF; border: none; padding: 14px 32px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(0, 102, 255, 0.3);">
+          <i class="fa-solid fa-floppy-disk"></i> Save & Apply Dynamic Rates Live
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       ADMIN MODALS (ADD DRIVER, ADD USER, REASSIGN)
+       ========================================================================= -->
+  <!-- 1. Add Driver Modal -->
+  <div class="modal-admin-overlay" id="adminAddDriverModal">
+    <div class="modal-admin-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="font-size: 1.3rem; font-weight: 900; color: #0F172A; margin: 0;">Onboard New Driver Partner</h3>
+        <button onclick="adminCtrl.closeModals()" style="background: none; border: none; color: #64748B; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Full Name</label>
+          <input type="text" id="newDrvName" class="admin-search-input" style="width: 100%; margin-top: 4px;" placeholder="e.g. Ramesh Babu">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Phone Number</label>
+            <input type="text" id="newDrvPhone" class="admin-search-input" style="width: 100%; margin-top: 4px;" placeholder="+91 98450 00000">
+          </div>
+          <div>
+            <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Experience (Years)</label>
+            <input type="number" id="newDrvExp" class="admin-search-input" style="width: 100%; margin-top: 4px;" value="8">
+          </div>
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Category</label>
+          <select id="newDrvCat" class="admin-search-input" style="width: 100%; margin-top: 4px;">
+            <option value="Top Rated Driver">⭐ Top Rated Driver</option>
+            <option value="Luxury Car Specialist">👑 Luxury Car Specialist</option>
+            <option value="Outstation Highway Expert">🛣️ Outstation Highway Expert</option>
+            <option value="City Commute & Party Driver">🏙️ City Commute & Party Driver</option>
+            <option value="Corporate & Executive Driver">👔 Corporate & Executive Driver</option>
+            <option value="EV & Automatic Specialist">⚡ EV & Automatic Specialist</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Car Specialty Expertise</label>
+          <input type="text" id="newDrvSpecialty" class="admin-search-input" style="width: 100%; margin-top: 4px;" placeholder="e.g. Automatic, Hyundai Creta, Fortuner, Sedans">
+        </div>
+
+        <button onclick="adminCtrl.submitNewDriver()" style="background: #10B981; color: #FFFFFF; border: none; padding: 14px; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);">
+          Save & Verify Driver Partner
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Add Customer Modal -->
+  <div class="modal-admin-overlay" id="adminAddUserModal">
+    <div class="modal-admin-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="font-size: 1.3rem; font-weight: 900; color: #0F172A; margin: 0;">Register New Customer Account</h3>
+        <button onclick="adminCtrl.closeModals()" style="background: none; border: none; color: #64748B; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Customer Name</label>
+          <input type="text" id="newUserName" class="admin-search-input" style="width: 100%; margin-top: 4px;" placeholder="e.g. Suresh Kumar">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Phone Number</label>
+          <input type="text" id="newUserPhone" class="admin-search-input" style="width: 100%; margin-top: 4px;" placeholder="+91 98450 11223">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Email Address</label>
+          <input type="email" id="newUserEmail" class="admin-search-input" style="width: 100%; margin-top: 4px;" placeholder="customer@example.com">
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Car Model & Transmission</label>
+          <input type="text" id="newUserCar" class="admin-search-input" style="width: 100%; margin-top: 4px;" placeholder="e.g. Kia Seltos (Automatic) - AP 16 CQ 3300">
+        </div>
+
+        <button onclick="adminCtrl.submitNewUser()" style="background: #0066FF; color: #FFFFFF; border: none; padding: 14px; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 14px rgba(0, 102, 255, 0.25);">
+          Create Customer Profile
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Core Scripts -->
+  <script src="js/app.js?v=15"></script>
+  <script src="js/state.js?v=15"></script>
+  <script src="js/map.js?v=15"></script>
+  <script src="js/admin.js?v=15"></script>
+</body>
+</html>

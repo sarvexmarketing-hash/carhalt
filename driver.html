@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DriverBee Partner Portal | Driver Console & Active Duty Manager</title>
+  <meta name="description" content="DriverBee Driver Partner Console - Receive on-demand hourly driver bookings, track active customer drives, verify OTPs, and manage your daily earnings.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Leaflet Maps CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <link rel="icon" type="image/svg+xml" href="assets/driverbee-icon.svg">
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="css/main.css?v=8">
+  <link rel="stylesheet" href="css/components.css?v=8">
+
+  <style>
+    :root {
+      --driver-bg: #0F172A;
+      --driver-card: #1E293B;
+      --driver-border: #334155;
+    }
+
+    body {
+      background: #F1F5F9;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      color: #0F172A;
+      min-height: 100vh;
+    }
+
+    .driver-header {
+      background: #0A0E1A;
+      border-bottom: 1px solid #1E293B;
+      padding: 14px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .driver-nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .driver-status-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #1E293B;
+      border: 1px solid #334155;
+      padding: 8px 18px;
+      border-radius: 9999px;
+    }
+
+    .driver-toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
+    }
+
+    .driver-toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .driver-toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #475569;
+      transition: .3s;
+      border-radius: 24px;
+    }
+
+    .driver-toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .driver-toggle-slider {
+      background-color: #10B981;
+    }
+
+    input:checked + .driver-toggle-slider:before {
+      transform: translateX(22px);
+    }
+
+    .driver-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .driver-kpi-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .driver-kpi-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .driver-kpi-val {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #0F172A;
+      line-height: 1.1;
+    }
+
+    .driver-kpi-lbl {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .driver-console-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .driver-box {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+
+    /* Radar animation */
+    .radar-pulse-ring {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: rgba(0, 102, 255, 0.08);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .radar-pulse-ring::before,
+    .radar-pulse-ring::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #0066FF;
+      animation: radarWave 2s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .radar-pulse-ring::after {
+      animation-delay: 1s;
+    }
+
+    @keyframes radarWave {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* Incoming Request Popup */
+    .incoming-dispatch-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .incoming-dispatch-modal.active {
+      display: flex;
+      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.92); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .dispatch-card-box {
+      background: #FFFFFF;
+      border-radius: 28px;
+      max-width: 520px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+      border: 2px solid #F59E0B;
+    }
+
+    .dispatch-timer-bar {
+      height: 8px;
+      background: #F1F5F9;
+      width: 100%;
+    }
+
+    .dispatch-timer-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10B981, #F59E0B, #EF4444);
+      width: 100%;
+      transition: width 1s linear;
+    }
+
+    @media (max-width: 900px) {
+      .driver-kpi-grid { grid-template-columns: 1fr 1fr; }
+      .driver-console-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Driver Header -->
+  <header class="driver-header">
+    <div class="container driver-nav-container">
+      <div style="display: flex; align-items: center; gap: 18px;">
+        <a href="index.html" class="site-brand" title="DriverBee Home">
+          <img src="assets/driverbee-logo-white.svg" alt="DriverBee" class="site-logo-img" style="height: 38px;">
+        </a>
+        <span class="site-brand-badge" style="background: #1E293B; color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 0.75rem;">
+          <i class="fa-solid fa-id-badge"></i> DRIVER PARTNER CONSOLE
+        </span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div class="driver-status-badge">
+          <div id="driverStatusDot" style="width: 10px; height: 10px; border-radius: 50%; background: #10B981; box-shadow: 0 0 10px #10B981;"></div>
+          <span id="driverStatusText" style="color: #FFFFFF; font-weight: 800; font-size: 0.88rem;">ONLINE & READY</span>
+          <label class="driver-toggle-switch">
+            <input type="checkbox" id="driverOnlineToggle" checked>
+            <span class="driver-toggle-slider"></span>
+          </label>
+        </div>
+
+        <a href="admin.html" target="_blank" style="background: rgba(0, 102, 255, 0.2); color: #38BDF8; text-decoration: none; padding: 8px 16px; border-radius: 9999px; font-weight: 700; font-size: 0.82rem; border: 1px solid rgba(0, 102, 255, 0.4); display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-shield-halved"></i> Admin Hub
+        </a>
+
+        <a href="index.html" style="background: rgba(255, 255, 255, 0.1); color: #FFFFFF; text-decoration: none; padding: 8px 16px; border-radius: 9999px; font-weight: 700; font-size: 0.82rem; border: 1px solid rgba(255, 255, 255, 0.2); display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-arrow-left"></i> Customer Website
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Driver Main Content -->
+  <div class="container" style="padding-top: 24px;">
+
+    <!-- Driver Profile Strip -->
+    <div style="background: #0A0E1A; color: #FFFFFF; border-radius: 20px; padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; border: 1px solid #1E293B;">
+      <div style="display: flex; align-items: center; gap: 18px;">
+        <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80" alt="Rajesh Kumar" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #F59E0B;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h2 style="font-size: 1.4rem; font-weight: 900; margin: 0; color: #FFFFFF;">Rajesh Kumar</h2>
+            <span style="background: #064E3B; color: #34D399; font-size: 0.72rem; font-weight: 800; padding: 3px 10px; border-radius: 9999px; border: 1px solid #059669;">
+              <i class="fa-solid fa-shield-check"></i> Police Verified
+            </span>
+          </div>
+          <div style="font-size: 0.86rem; color: #94A3B8; margin-top: 4px;">
+            <i class="fa-solid fa-car-side" style="color: #F59E0B; margin-right: 4px;"></i> Expert in <b>Manual, Automatic & Luxury SUVs</b> · 8+ Years Exp
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button id="btnSimulateCustomerSearch" style="background: linear-gradient(135deg, #F59E0B, #D97706); color: #000000; border: none; font-weight: 900; padding: 10px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.88rem; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
+          <i class="fa-solid fa-bolt"></i> Simulate Incoming Customer Request
+        </button>
+      </div>
+    </div>
+
+    <!-- Driver KPI Metrics -->
+    <div class="driver-kpi-grid">
+      <div class="driver-kpi-card">
+        <div class="driver-kpi-icon" style="background: #ECFDF5; color: #10B981;">
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+        </div>
+        <div>
+          <div class="driver-kpi-val" style="color: #10B981;" id="kpiEarnings">₹2,150</div>
+          <div class="driver-kpi-lbl">Today's Payout</div>
+        </div>
+      </div>
+
+      <div class="driver-kpi-card">
+        <div class="driver-kpi-icon" style="background: #EFF6FF; color: #0066FF;">
+          <i class="fa-solid fa-car"></i>
+        </div>
+        <div>
+          <div class="driver-kpi-val" id="kpiTrips">3</div>
+          <div class="driver-kpi-lbl">Trips Completed</div>
+        </div>
+      </div>
+
+      <div class="driver-kpi-card">
+        <div class="driver-kpi-icon" style="background: #FFFBEB; color: #F59E0B;">
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <div>
+          <div class="driver-kpi-val" id="kpiRating">4.95</div>
+          <div class="driver-kpi-lbl">Customer Rating</div>
+        </div>
+      </div>
+
+      <div class="driver-kpi-card">
+        <div class="driver-kpi-icon" style="background: #F5F3FF; color: #8B5CF6;">
+          <i class="fa-solid fa-bolt-lightning"></i>
+        </div>
+        <div>
+          <div class="driver-kpi-val" id="kpiAcceptance">98%</div>
+          <div class="driver-kpi-lbl">Acceptance Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Console Grid -->
+    <div class="driver-console-grid">
+
+      <!-- LEFT: Live Radar / Active Trip Control Box -->
+      <div class="driver-box">
+
+        <!-- 1. RADAR WAITING STATE (When no active trip) -->
+        <div id="driverRadarSection" style="text-align: center; padding: 20px 0;">
+          <div class="radar-pulse-ring">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background: #0066FF; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 1.8rem; box-shadow: 0 4px 20px rgba(0, 102, 255, 0.4);">
+              <i class="fa-solid fa-satellite-dish fa-beat"></i>
+            </div>
+          </div>
+          <h3 style="font-size: 1.35rem; font-weight: 900; margin-bottom: 6px;">Hotspot Radar Active: Benz Circle</h3>
+          <p style="font-size: 0.9rem; color: #64748B; max-width: 380px; margin: 0 auto 20px;">
+            Scanning for customers requesting a driver for their personal car. New booking requests will trigger immediately.
+          </p>
+
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: #EEF4FF; border: 1px solid #BFDBFE; color: #0066FF; padding: 8px 18px; border-radius: 9999px; font-weight: 800; font-size: 0.85rem;">
+            <i class="fa-solid fa-circle-dot fa-fade" style="color: #10B981;"></i> 4 Active Customer Requests in Vijayawada
+          </div>
+        </div>
+
+        <!-- 2. ACCEPTED / EN ROUTE TO PICKUP STATE -->
+        <div id="driverEnRouteSection" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <span class="badge badge-warning" style="background: #FFFBEB; color: #B45309; font-weight: 800; font-size: 0.82rem; padding: 6px 14px; border: 1px solid #FCD34D;">
+              <i class="fa-solid fa-person-walking-luggage"></i> EN ROUTE TO PICKUP SPOT
+            </span>
+            <span id="driverEnRouteEta" style="font-weight: 900; color: #0066FF; font-size: 1.05rem;">ETA: ~6 Mins</span>
+          </div>
+
+          <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 18px; padding: 18px; margin-bottom: 20px;">
+            <div style="font-size: 0.78rem; font-weight: 800; color: #64748B; text-transform: uppercase; margin-bottom: 4px;">Customer & Car Details</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 1.2rem; font-weight: 900; color: #0F172A;" id="activeCustomerName">Javed Sayed</div>
+                <div style="font-size: 0.85rem; color: #64748B;" id="activeCustomerCar">Hyundai Creta (Automatic)</div>
+              </div>
+              <a href="tel:+919876543210" style="background: #0066FF; color: #fff; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);">
+                <i class="fa-solid fa-phone"></i>
+              </a>
+            </div>
+
+            <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #E2E8F0; font-size: 0.88rem;">
+              <i class="fa-solid fa-location-dot" style="color: #EF4444; margin-right: 6px;"></i>
+              <b id="activeCustomerPickup">Benz Circle, Vijayawada</b>
+            </div>
+          </div>
+
+          <button id="btnDriverMarkArrived" style="width: 100%; background: #0066FF; color: #FFFFFF; border: none; padding: 16px; border-radius: 16px; font-weight: 900; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(0, 102, 255, 0.35);">
+            <i class="fa-solid fa-circle-check"></i> I Have Arrived at Pickup Spot
+          </button>
+        </div>
+
+        <!-- 3. ARRIVED / OTP VERIFICATION STATE -->
+        <div id="driverOtpSection" style="display: none;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: #ECFDF5; color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 12px; border: 2px solid #34D399;">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <h3 style="font-size: 1.3rem; font-weight: 900; margin: 0;">Car Handover & Security OTP</h3>
+            <p style="font-size: 0.88rem; color: #64748B; margin-top: 4px;">
+              Ask the customer for the <b>4-digit Security OTP</b> displayed on their screen to start driving.
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px; align-items: center;">
+            <input type="text" id="driverOtpInput" placeholder="● ● ● ●" maxlength="4" style="width: 220px; height: 64px; text-align: center; font-size: 2rem; font-weight: 900; letter-spacing: 12px; border: 2.5px solid #0066FF; border-radius: 16px; outline: none; background: #F8FAFC;">
+            
+            <button id="btnVerifyOtpAndStart" style="width: 100%; background: #10B981; color: #FFFFFF; border: none; padding: 16px; border-radius: 16px; font-weight: 900; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+              <i class="fa-solid fa-play"></i> Verify OTP & Start Driving
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. ACTIVE DRIVING SESSION STATE -->
+        <div id="driverActiveTripSection" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <span class="badge badge-success" style="background: #ECFDF5; color: #065F46; font-weight: 800; font-size: 0.85rem; padding: 6px 14px; border: 1px solid #34D399;">
+              <i class="fa-solid fa-circle-dot fa-fade"></i> DRIVING CUSTOMER'S CAR
+            </span>
+            <span style="font-size: 0.82rem; font-weight: 800; color: #64748B;" id="driverTripBookedDuration">4 Hours Package</span>
+          </div>
+
+          <!-- Trip Timer Box -->
+          <div style="background: #0A0E1A; color: #FFFFFF; border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">Remaining Duty Time</div>
+            <div style="font-size: 2.8rem; font-weight: 900; letter-spacing: 2px; color: #F59E0B; font-family: monospace;" id="driverRemainingTimer">04:00:00</div>
+            <div style="font-size: 0.85rem; color: #94A3B8; margin-top: 4px;">
+              Car: <b style="color: #FFFFFF;" id="driverActiveCarModel">Hyundai Creta (Automatic)</b>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 16px;">
+              <div style="font-size: 0.75rem; color: #64748B; font-weight: 700;">Customer Fare</div>
+              <div style="font-size: 1.25rem; font-weight: 900; color: #0F172A;" id="driverCustFare">₹600</div>
+            </div>
+            <div style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 14px; padding: 12px 16px;">
+              <div style="font-size: 0.75rem; color: #047857; font-weight: 700;">Your Earnings</div>
+              <div style="font-size: 1.25rem; font-weight: 900; color: #10B981;" id="driverYourEarnings">₹480</div>
+            </div>
+          </div>
+
+          <button id="btnDriverEndTrip" style="width: 100%; background: #EF4444; color: #FFFFFF; border: none; padding: 16px; border-radius: 16px; font-weight: 900; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);">
+            <i class="fa-solid fa-flag-checkered"></i> Complete & End Duty Ride
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Interactive Navigation Map & Live Route -->
+      <div class="driver-box" style="display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <h3 style="font-size: 1.2rem; font-weight: 900; margin: 0;">
+            <i class="fa-solid fa-map-location-dot" style="color: #0066FF; margin-right: 6px;"></i> Live GPS Dispatch Route
+          </h3>
+          <span style="font-size: 0.78rem; font-weight: 800; color: #10B981; background: #ECFDF5; padding: 4px 10px; border-radius: 9999px;">
+            <i class="fa-solid fa-location-crosshairs"></i> GPS HIGH ACCURACY
+          </span>
+        </div>
+
+        <div style="height: 380px; width: 100%; border-radius: 18px; overflow: hidden; border: 1px solid #CBD5E1; margin-bottom: 16px;">
+          <div id="driverPortalNavMap" style="width: 100%; height: 100%;"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #64748B;">
+          <span><i class="fa-solid fa-shield-halved" style="color: #10B981;"></i> Insured drive coverage active</span>
+          <span>Vijayawada Metropolitan Area</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Duty History & Recent Payouts Table -->
+    <div class="driver-box" style="margin-bottom: 60px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+          <h3 style="font-size: 1.3rem; font-weight: 900; margin: 0;">Recent Duty History & Payouts</h3>
+          <p style="font-size: 0.86rem; color: #64748B; margin-top: 2px;">All completed customer driver rentals logged in real time</p>
+        </div>
+        <span style="font-size: 0.82rem; font-weight: 800; color: #0066FF;">Updated live</span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+          <thead>
+            <tr style="border-bottom: 2px solid #E2E8F0; color: #64748B; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              <th style="padding: 12px 16px;">Trip ID</th>
+              <th style="padding: 12px 16px;">Customer</th>
+              <th style="padding: 12px 16px;">Hours Booked</th>
+              <th style="padding: 12px 16px;">Pickup Location</th>
+              <th style="padding: 12px 16px;">Time</th>
+              <th style="padding: 12px 16px; text-align: right;">Driver Payout</th>
+            </tr>
+          </thead>
+          <tbody id="driverHistoryTableBody">
+            <!-- Populated dynamically via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================================
+       INCOMING RIDE REQUEST POPUP MODAL (FLOATING DISPATCH RADAR CARD)
+       ========================================================================= -->
+  <div class="incoming-dispatch-modal" id="driverIncomingModal">
+    <div class="dispatch-card-box">
+      <!-- 30s Countdown progress bar -->
+      <div class="dispatch-timer-bar">
+        <div class="dispatch-timer-fill" id="driverDispatchTimerFill"></div>
+      </div>
+
+      <div style="padding: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <span id="driverRequestTypeBadge" style="background: #FFFBEB; color: #B45309; font-size: 0.8rem; font-weight: 800; padding: 4px 12px; border-radius: 9999px; border: 1px solid #FCD34D; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-bolt"></i> NEW DRIVER ON DEMAND REQUEST
+          </span>
+          <span style="font-weight: 800; color: #EF4444; font-size: 0.9rem;" id="dispatchSecondsLeft">30s</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+          <div>
+            <div style="font-size: 1.5rem; font-weight: 900; color: #0F172A;" id="modalCustomerName">Javed Sayed</div>
+            <div style="font-size: 0.9rem; color: #64748B;" id="modalCustomerCar">Hyundai Creta (Automatic)</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 1.8rem; font-weight: 900; color: #10B981;" id="modalDriverPayout">₹480</div>
+            <div style="font-size: 0.78rem; font-weight: 700; color: #64748B;">YOUR NET EARNINGS</div>
+          </div>
+        </div>
+
+        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-clock" style="color: #0066FF; font-size: 1.1rem;"></i>
+            <div>
+              <div style="font-size: 0.78rem; color: #64748B; font-weight: 700;">DURATION BOOKED</div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A;" id="modalDurationHours">4 Hours Package (Within City)</div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-location-dot" style="color: #EF4444; font-size: 1.1rem;"></i>
+            <div>
+              <div style="font-size: 0.78rem; color: #64748B; font-weight: 700;">PICKUP SPOT</div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A;" id="modalPickupAddress">Benz Circle, Vijayawada</div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-route" style="color: #10B981; font-size: 1.1rem;"></i>
+            <div>
+              <div style="font-size: 0.78rem; color: #64748B; font-weight: 700;">DISTANCE TO CUSTOMER</div>
+              <div style="font-size: 0.95rem; font-weight: 800; color: #0F172A;">~1.2 km away (6 mins travel)</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 14px;">
+          <button id="btnDeclineRequest" style="background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; border-radius: 16px; padding: 16px; font-weight: 800; font-size: 1rem; cursor: pointer;">
+            Decline
+          </button>
+          <button id="btnAcceptRequest" style="background: #10B981; color: #FFFFFF; border: none; border-radius: 16px; padding: 16px; font-weight: 900; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);">
+            <i class="fa-solid fa-circle-check"></i> ACCEPT DUTY
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       COMPLETED DUTY RECEIPT MODAL (DRIVER VIEW)
+       ========================================================================= -->
+  <div class="incoming-dispatch-modal" id="driverCompletedModal">
+    <div class="dispatch-card-box" style="border-color: #10B981; max-width: 480px;">
+      <div style="padding: 32px; text-align: center;">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: #ECFDF5; color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 16px; border: 3px solid #34D399;">
+          <i class="fa-solid fa-check"></i>
+        </div>
+
+        <h3 style="font-size: 1.5rem; font-weight: 900; margin: 0 0 6px;">Duty Completed!</h3>
+        <p style="font-size: 0.9rem; color: #64748B; margin: 0 0 20px;">Car returned safely to customer. Payout has been credited to your DriverBee wallet.</p>
+
+        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 18px; padding: 20px; text-align: left; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #64748B; font-weight: 600;">Customer:</span>
+            <span style="font-weight: 800; color: #0F172A;" id="receiptCustName">Javed Sayed</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #64748B; font-weight: 600;">Hours Booked:</span>
+            <span style="font-weight: 800; color: #0066FF;" id="receiptHoursBooked">4 Hours</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #64748B; font-weight: 600;">Customer Bill:</span>
+            <span style="font-weight: 800; color: #0F172A;" id="receiptCustTotal">₹600</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1.5px dashed #CBD5E1;">
+            <span style="color: #047857; font-weight: 800; font-size: 1.05rem;">Your Payout:</span>
+            <span style="font-weight: 900; color: #10B981; font-size: 1.3rem;" id="receiptDriverEarned">+₹480</span>
+          </div>
+        </div>
+
+        <button id="btnCloseCompletedModal" style="width: 100%; background: #0F172A; color: #FFFFFF; border: none; padding: 16px; border-radius: 16px; font-weight: 900; font-size: 1.05rem; cursor: pointer;">
+          Back to Hotspot Radar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Leaflet Maps Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Core Scripts -->
+  <script src="js/app.js?v=15"></script>
+  <script src="js/state.js?v=15"></script>
+  <script src="js/map.js?v=15"></script>
+  <script src="js/driver.js?v=15"></script>
+
+  <script>
+    // Initialize Map on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        if (window.mapManager) {
+          window.mapManager.initDriverNavMap('driverPortalNavMap');
+        }
+      }, 300);
+    });
+  </script>
+</body>
+</html>

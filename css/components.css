@@ -6,7 +6,7 @@
 /* --- HERO & BOOKING WIDGET SECTION --- */
 .hero-web-section {
   position: relative;
-  background: radial-gradient(circle at 85% 15%, rgba(0, 102, 255, 0.08) 0%, rgba(0, 210, 255, 0.04) 40%, #F8FAFC 80%);
+  background: radial-gradient(circle at 85% 15%, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.03) 40%, #FFFFFF 80%);
   padding: 65px 0 85px;
   border-bottom: 1px solid var(--border-subtle);
   overflow: hidden;
@@ -18,7 +18,7 @@
   right: -120px;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(0, 102, 255, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, transparent 70%);
   pointer-events: none;
   z-index: 1;
 }
@@ -42,15 +42,15 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #FFFFFF;
-  border: 1.5px solid #E2E8F0;
+  background: #FFFBEB;
+  border: 1.5px solid #FCD34D;
   padding: 6px 16px;
   border-radius: var(--radius-full);
   font-size: 0.82rem;
   font-weight: 800;
-  color: var(--color-accent);
+  color: #92400E;
   width: fit-content;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
   letter-spacing: -0.01em;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .hero-heading span.gradient-text-accent {
-  background: linear-gradient(135deg, #0066FF, #00C6FF);
+  background: linear-gradient(135deg, #F59E0B, #D97706);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -99,13 +99,14 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: #EEF4FF;
-  color: #0066FF;
+  background: #FFFBEB;
+  color: #D97706;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.95rem;
   flex-shrink: 0;
+  border: 1px solid #FCD34D;
 }
 
 .trust-text {
@@ -129,10 +130,10 @@
 /* --- HERO BOOKING BOX WIDGET --- */
 .hero-booking-card {
   background: #FFFFFF;
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1.5px solid #E2E8F0;
   border-radius: 28px;
   padding: 28px 26px;
-  box-shadow: 0 25px 55px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(0, 102, 255, 0.05);
+  box-shadow: 0 25px 55px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(245, 158, 11, 0.1);
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -157,13 +158,13 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #0066FF, #00C6FF);
-  color: #fff;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #0A0E1A;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1rem;
-  box-shadow: 0 4px 10px rgba(0, 102, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
   flex-shrink: 0;
 }
 
@@ -319,8 +320,8 @@
 }
 
 .widget-input:focus {
-  border-color: #0066FF;
-  box-shadow: 0 0 0 3px var(--color-accent-glow);
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
 }
 
 .btn-gps-action {
@@ -328,13 +329,13 @@
   right: 6px;
   top: 6px;
   bottom: 6px;
-  background: #EEF4FF;
-  border: 1px solid rgba(0, 102, 255, 0.2);
+  background: #FFFBEB;
+  border: 1px solid rgba(245, 158, 11, 0.35);
   border-radius: 10px;
   padding: 0 10px;
   font-size: 0.74rem;
   font-weight: 800;
-  color: #0066FF;
+  color: #B45309;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -344,8 +345,8 @@
 }
 
 .btn-gps-action:hover {
-  background: #0066FF;
-  color: #fff;
+  background: #F59E0B;
+  color: #0A0E1A;
 }
 
 /* Outstation Destination */
@@ -388,14 +389,14 @@
 }
 
 .car-spec-btn:hover {
-  border-color: #94A3B8;
+  border-color: #CBD5E1;
 }
 
 .car-spec-btn.active {
-  border-color: #0066FF;
-  background: #EEF4FF;
-  color: #0066FF;
-  box-shadow: 0 0 0 1px #0066FF;
+  border-color: #F59E0B;
+  background: #FFFBEB;
+  color: #92400E;
+  box-shadow: 0 0 0 1px #F59E0B;
 }
 
 .spec-icon {
@@ -432,15 +433,15 @@
 }
 
 .duration-web-card:hover {
-  border-color: #94A3B8;
+  border-color: #CBD5E1;
   transform: translateY(-1px);
 }
 
 .duration-web-card.active {
-  border-color: #0F172A;
-  background: #0F172A;
+  border-color: #0A0E1A;
+  background: #0A0E1A;
   color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 4px 14px rgba(10, 14, 26, 0.25);
 }
 
 .duration-web-card .dur-hrs {
@@ -457,7 +458,7 @@
 }
 
 .duration-web-card.active .dur-cost {
-  color: #38BDF8;
+  color: #F59E0B;
 }
 
 .duration-badge-trip {
@@ -474,12 +475,12 @@
 /* Custom Duration Stepper & Slider Panel */
 .custom-duration-panel {
   display: none;
-  background: #F8FAFC;
-  border: 1.5px solid #0066FF;
+  background: #FFFBEB;
+  border: 1.5px solid #FCD34D;
   border-radius: 16px;
   padding: 14px 16px;
   margin-top: 6px;
-  box-shadow: 0 4px 14px rgba(0, 102, 255, 0.08);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.12);
   animation: fadeIn 0.2s ease;
 }
 
@@ -506,7 +507,7 @@
 .custom-panel-badge {
   font-size: 0.74rem;
   font-weight: 800;
-  color: #0066FF;
+  color: #B45309;
 }
 
 .custom-stepper-wrap {
@@ -534,9 +535,9 @@
 }
 
 .stepper-btn:hover {
-  background: #0066FF;
-  color: #FFFFFF;
-  border-color: #0066FF;
+  background: #F59E0B;
+  color: #0A0E1A;
+  border-color: #F59E0B;
 }
 
 .stepper-val-display {
@@ -557,12 +558,12 @@
 .stepper-val-sub {
   font-size: 0.72rem;
   font-weight: 800;
-  color: #0066FF;
+  color: #B45309;
 }
 
 .custom-range-slider {
   width: 100%;
-  accent-color: #0066FF;
+  accent-color: #F59E0B;
   cursor: pointer;
   height: 6px;
   border-radius: 4px;
@@ -590,26 +591,26 @@
 }
 
 .quick-hour-chip:hover, .quick-hour-chip.active {
-  background: #0066FF;
-  color: #FFFFFF;
-  border-color: #0066FF;
+  background: #F59E0B;
+  color: #0A0E1A;
+  border-color: #F59E0B;
 }
 
 .btn-search-cars {
   width: 100%;
-  background: linear-gradient(135deg, #0066FF, #0052CC);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #0A0E1A;
   border: none;
   border-radius: 16px;
   padding: 16px 0;
-  font-size: 1rem;
-  font-weight: 800;
+  font-size: 1.05rem;
+  font-weight: 900;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 10px 24px rgba(0, 102, 255, 0.35);
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.38);
   transition: var(--transition-fast);
   font-family: inherit;
   margin-top: 2px;
@@ -617,7 +618,8 @@
 
 .btn-search-cars:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(0, 102, 255, 0.45);
+  box-shadow: 0 14px 30px rgba(245, 158, 11, 0.5);
+  background: linear-gradient(135deg, #FBBF24, #F59E0B);
 }
 
 .btn-search-cars:active {
@@ -861,9 +863,10 @@
 }
 
 .fleet-btn-book:hover {
-  background: #0066FF;
+  background: #F59E0B;
+  color: #0A0E1A;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 102, 255, 0.35);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
 }
 
 /* --- USE-CASE CARDS (Party, Airport, Outstation, Valet) --- */
@@ -887,8 +890,8 @@
 }
 
 .use-case-card:hover {
-  border-color: #0066FF;
-  box-shadow: var(--shadow-md);
+  border-color: #F59E0B;
+  box-shadow: 0 10px 25px -4px rgba(245, 158, 11, 0.15);
   transform: translateY(-3px);
 }
 
@@ -926,15 +929,15 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0066FF, #00C6FF);
-  color: #fff;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #0A0E1A;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
   font-size: 1.15rem;
   margin-bottom: 20px;
-  box-shadow: 0 8px 20px rgba(0, 102, 255, 0.35);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
 }
 
 .step-card-title {

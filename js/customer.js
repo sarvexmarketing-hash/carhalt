@@ -1,6 +1,7 @@
 /* ==========================================================================
    DRIVERBEE - ON-DEMAND DRIVER CUSTOMER CONTROLLER
    Booking verified professional drivers for fixed durations (2h, 4h, 6h, 8h)
+   Cross-synced in real-time with Driver Partner Portal
    ========================================================================== */
 
 class CustomerController {
@@ -9,8 +10,9 @@ class CustomerController {
     this.appliedPromo = null;
     this.selectedPaymentMethod = 'UPI';
     this.currentResultsCategory = 'all';
-    this.customHours = 3;
+    this.customHours = 4;
     this.isCustomMode = false;
+    this.lastShownReceiptId = null;
     this.init();
   }
 
@@ -20,11 +22,12 @@ class CustomerController {
     this.renderDrivers();
     this.syncActiveScreen();
 
-    // Listen for state changes
+    // Listen for state changes (including cross-tab storage events from driver portal)
     window.appState.subscribe(() => {
       this.renderDurationCards();
       this.renderDrivers();
       this.syncActiveSessionBanner();
+      this.syncTrackingStateFromStore();
     });
 
     // Listen for driver arrival event
@@ -34,6 +37,16 @@ class CustomerController {
   }
 
   bindEvents() {
+    // Backdrop click to dismiss completed ride receipt
+    const compModal = document.getElementById('customerCompletedModal');
+    if (compModal) {
+      compModal.addEventListener('click', (e) => {
+        if (e.target === compModal) {
+          this.dismissCompletedReceipt();
+        }
+      });
+    }
+
     // Trip Type Selector (Within City vs Outside City)
     const tripCards = document.querySelectorAll('.trip-type-card');
     tripCards.forEach(card => {
@@ -44,7 +57,6 @@ class CustomerController {
 
         window.appState.setSelection({ tripType: type });
         
-        // Show/hide outstation destination input
         const outstationBox = document.getElementById('outstationDestCard');
         if (outstationBox) {
           if (type === 'outside') {
@@ -146,6 +158,15 @@ class CustomerController {
       });
     });
 
+    // Find & Match Available Drivers Action
+    const findDriversBtn = document.getElementById('btnFindMatchDrivers');
+    if (findDriversBtn) {
+      findDriversBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.openDriversPage();
+      });
+    }
+
     // Confirm Booking Action
     const confirmBtn = document.getElementById('confirmBookingBtn');
     if (confirmBtn) {
@@ -179,44 +200,75 @@ class CustomerController {
     }
   }
 
-  // Opens the dedicated Matched Drivers Directory Page
+  // Opens the dedicated Matched Drivers Directory Page & Broadcasts Request to Drivers
   openDriversPage() {
-    const searchInp = document.getElementById('locationSearchInput');
-    const destInp = document.getElementById('outstationDestInput');
-    const state = window.appState.get();
+    try {
+      const searchInp = document.getElementById('locationSearchInput');
+      const destInp = document.getElementById('outstationDestInput');
 
-    if (searchInp && searchInp.value) {
-      window.appState.setSelection({ pickupAddress: searchInp.value });
+      if (searchInp && searchInp.value) {
+        window.appState.setSelection({ pickupAddress: searchInp.value });
+      }
+      if (destInp && destInp.value) {
+        window.appState.setSelection({ destinationAddress: destInp.value });
+      }
+
+      const updatedState = window.appState.get();
+      const duration = updatedState.selection.durationHours || 4;
+      const tripType = updatedState.selection.tripType || 'within';
+      const pickup = updatedState.selection.pickupAddress || 'Benz Circle, Vijayawada';
+
+      // 1. Broadcast customer searching / ride request to Driver Portal immediately
+      window.appState.broadcastBookingRequest({
+        durationHours: duration,
+        tripType: tripType,
+        pickupAddress: pickup,
+        carModel: 'Hyundai Creta (Automatic)'
+      });
+
+      // 2. Play audio feedback
+      if (window.soundFx && typeof window.soundFx.playSuccessChime === 'function') {
+        window.soundFx.playSuccessChime();
+      }
+
+      // 3. Switch view directly in DOM & via router
+      if (typeof window.switchAppView === 'function') {
+        window.switchAppView('screen-drivers-results');
+      } else {
+        const custView = document.getElementById('customerAppView');
+        const resultsView = document.getElementById('driverResultsView');
+        if (custView) custView.style.display = 'none';
+        if (resultsView) resultsView.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // 4. Update Summary Header Bar on Results Page
+      const locText = document.getElementById('resultsPickupText');
+      const durText = document.getElementById('resultsDurationText');
+      const tripText = document.getElementById('resultsTripTypeText');
+      const price = window.appState.getDurationPrice(duration, tripType);
+
+      if (locText) locText.textContent = pickup.split(',')[0] + ', Vijayawada';
+      if (durText) durText.textContent = `${duration} Hours Duration (₹${price.toLocaleString('en-IN')})`;
+      if (tripText) tripText.textContent = tripType === 'outside' ? 'Outside City (Outstation)' : 'Within City Drive';
+
+      // 5. Render drivers list
+      this.renderDrivers();
+
+      // 6. Initialize interactive map
+      setTimeout(() => {
+        if (window.mapManager && typeof window.mapManager.initDispatcherMap === 'function') {
+          window.mapManager.initDispatcherMap('matchedDriversMap');
+        }
+      }, 200);
+
+      // 7. Toast notification
+      if (typeof window.showToast === 'function') {
+        window.showToast(`🔔 Duty request broadcasted to Driver Portal! Available drivers can accept it.`, 'success');
+      }
+    } catch (err) {
+      console.error('Error in openDriversPage:', err);
     }
-    if (destInp && destInp.value) {
-      window.appState.setSelection({ destinationAddress: destInp.value });
-    }
-
-    window.soundFx.playSuccessChime();
-    window.switchAppView('screen-drivers-results');
-
-    // Update Summary Header Bar on Results Page
-    const updatedState = window.appState.get();
-    const locText = document.getElementById('resultsPickupText');
-    const durText = document.getElementById('resultsDurationText');
-    const tripText = document.getElementById('resultsTripTypeText');
-
-    const duration = updatedState.selection.durationHours;
-    const tripType = updatedState.selection.tripType;
-    const price = window.appState.getDurationPrice(duration, tripType);
-
-    if (locText) locText.textContent = updatedState.selection.pickupAddress.split(',')[0] + ', Vijayawada';
-    if (durText) durText.textContent = `${duration} Hours Duration (₹${price.toLocaleString('en-IN')})`;
-    if (tripText) tripText.textContent = tripType === 'outside' ? 'Outside City (Outstation)' : 'Within City Drive';
-
-    this.renderDrivers();
-
-    // Initialize radar map on the results page
-    setTimeout(() => {
-      window.mapManager.initDispatcherMap('matchedDriversMap');
-    }, 200);
-
-    window.showToast(`Found 6 verified drivers available in ${updatedState.selection.pickupAddress.split(',')[0]}!`, 'success');
   }
 
   filterResultsCategory(cat, btn) {
@@ -279,7 +331,6 @@ class CustomerController {
     if (cardPrice) cardPrice.textContent = `₹${price.toLocaleString('en-IN')}`;
     if (cardLabel) cardLabel.textContent = `${this.customHours}h Custom`;
 
-    // Update active quick chip
     document.querySelectorAll('.quick-hour-chip').forEach(chip => {
       const match = chip.textContent.trim() === `${this.customHours}h` || (this.customHours === 24 && chip.textContent.includes('24h'));
       if (match) {
@@ -369,7 +420,7 @@ class CustomerController {
       
       if (isResultsPage) {
         return `
-          <div class="fleet-car-card" style="border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm); background: #FFFFFF;" data-driver-id="${driver.id}">
+          <div class="fleet-car-card" style="border-radius: 24px; padding: 24px; box-shadow: var(--shadow-sm); background: #FFFFFF; border: 1.5px solid #E2E8F0;" data-driver-id="${driver.id}">
             <div class="card-top-badges">
               <span class="badge-fleet-cat" style="background: #EEF4FF; color: #0066FF; font-weight: 800;">${driver.category}</span>
               <span class="badge-fleet-eta"><i class="fa-solid fa-bolt"></i> Reaches in ${driver.etaMins} mins · ${driver.distanceKm} km</span>
@@ -395,15 +446,19 @@ class CustomerController {
               <i class="fa-solid fa-car-side" style="color: #0066FF; margin-right: 8px;"></i> <b>Specialty:</b> ${driver.specialty}
             </div>
 
-            <div class="fleet-car-bottom">
+            <div class="fleet-car-bottom" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
               <div class="fleet-price-col">
                 <span class="fleet-price-amount" style="font-size: 1.6rem; color: #0F172A;">₹${price.toLocaleString('en-IN')}</span>
                 <span class="fleet-price-sub" style="font-weight: 700; color: #64748B;">Total for ${duration} Hours (${tripType === 'outside' ? 'Outside City' : 'Within City'})</span>
               </div>
-              <button class="fleet-btn-book" style="padding: 13px 28px; font-size: 0.95rem;" onclick="customerCtrl.openBookingDrawer('${driver.id}')">
-                <span>Hire This Driver</span>
-                <i class="fa-solid fa-arrow-right" style="font-size: 0.8rem;"></i>
-              </button>
+              <div style="display: flex; gap: 10px;">
+                <button class="fleet-btn-book" style="padding: 12px 20px; font-size: 0.9rem; background: #F1F5F9; color: #0F172A; border: 1.5px solid #CBD5E1;" onclick="customerCtrl.openBookingDrawer('${driver.id}')">
+                  <span>Fare & Details</span>
+                </button>
+                <button class="fleet-btn-book" style="padding: 12px 24px; font-size: 0.95rem; background: #0066FF; color: #FFFFFF; border: none; box-shadow: 0 4px 14px rgba(0, 102, 255, 0.35);" onclick="customerCtrl.requestDirectDriver('${driver.id}')">
+                  <span><i class="fa-solid fa-paper-plane" style="margin-right: 6px;"></i> Request ${driver.name.split(' ')[0]}</span>
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -445,21 +500,19 @@ class CustomerController {
               <span class="fleet-price-amount">₹${price.toLocaleString('en-IN')}</span>
               <span class="fleet-price-sub">for ${duration} Hours (${tripType === 'outside' ? 'Outside City' : 'Within City'})</span>
             </div>
-            <button class="fleet-btn-book" onclick="customerCtrl.openBookingDrawer('${driver.id}')">
-              Hire Driver <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem; margin-left: 4px;"></i>
+            <button class="fleet-btn-book" onclick="customerCtrl.requestDirectDriver('${driver.id}')">
+              Request Driver <i class="fa-solid fa-arrow-right" style="font-size: 0.75rem; margin-left: 4px;"></i>
             </button>
           </div>
         </div>
       `;
     };
 
-    // Render to Homepage List
     const homeList = document.getElementById('popularCarsList');
     if (homeList) {
       homeList.innerHTML = drivers.map(d => generateDriverCardHtml(d, false)).join('');
     }
 
-    // Render to Dedicated Results Page List
     const resultsList = document.getElementById('resultsDriverCardsList');
     if (resultsList) {
       resultsList.innerHTML = drivers.map(d => generateDriverCardHtml(d, true)).join('');
@@ -494,10 +547,15 @@ class CustomerController {
     const nameEl = document.getElementById('drawerCarName');
     const subEl = document.getElementById('drawerCarSub');
     const imgEl = document.getElementById('drawerCarImg');
+    const confirmBtn = document.getElementById('confirmBookingBtn');
 
     if (nameEl) nameEl.textContent = driver.name;
     if (subEl) subEl.textContent = `${driver.category} · ${driver.experienceYears} Yrs Experience · ${tripType === 'outside' ? 'Outside City Drive' : 'Within City Drive'}`;
     if (imgEl) imgEl.src = driver.avatar;
+
+    if (confirmBtn) {
+      confirmBtn.innerHTML = `<span>Send Direct Request to ${driver.name.split(' ')[0]}</span> <i class="fa-solid fa-paper-plane"></i>`;
+    }
 
     this.updateDrawerFare();
   }
@@ -531,65 +589,373 @@ class CustomerController {
     if (totalEl) totalEl.textContent = `₹${fare.total.toLocaleString('en-IN')}`;
   }
 
+  // Handle drawer confirm button
   processBookingConfirmation() {
     const state = window.appState.get();
-    const driver = state.drivers.find(d => d.id === state.selection.selectedDriverId) || state.drivers[0];
+    const driverId = state.selection.selectedDriverId || 'drv_1';
+    this.closeBookingDrawer();
+    this.requestDirectDriver(driverId);
+  }
+
+  // 1. Direct Request to a Specific Driver
+  requestDirectDriver(driverId) {
+    const state = window.appState.get();
+    const driver = state.drivers.find(d => d.id === driverId) || state.drivers[0];
+    const duration = state.selection.durationHours || 4;
+    const tripType = state.selection.tripType || 'within';
+    const pickup = state.selection.pickupAddress || 'Benz Circle, Vijayawada';
+
     const fare = window.appState.calculateFareSummary(
       driver.id,
-      state.selection.durationHours,
-      state.selection.tripType,
+      duration,
+      tripType,
       this.appliedPromo
     );
 
-    const confirmBtn = document.getElementById('confirmBookingBtn');
-    if (confirmBtn) {
-      confirmBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Dispatching Driver...`;
-      confirmBtn.disabled = true;
+    // Broadcast direct request targeted to this driver
+    const req = window.appState.broadcastBookingRequest({
+      targetDriverId: driver.id,
+      targetDriverName: driver.name,
+      durationHours: duration,
+      tripType: tripType,
+      pickupAddress: pickup,
+      carModel: state.selection.carModel || 'Hyundai Creta (Automatic)',
+      carTransmission: state.selection.carTransmission || 'Automatic',
+      fare: fare
+    });
+
+    if (window.soundFx) window.soundFx.playSuccessChime();
+    window.showToast(`🎯 Direct request sent to ${driver.name}. Waiting for driver confirmation...`, 'accent');
+
+    this.openWaitingRoomModal(req);
+  }
+
+  // 2. Broadcast to All Drivers Directly (Quick Match)
+  broadcastToAllDirectly() {
+    const state = window.appState.get();
+    const duration = state.selection.durationHours || 4;
+    const tripType = state.selection.tripType || 'within';
+    const pickup = state.selection.pickupAddress || 'Benz Circle, Vijayawada';
+
+    const req = window.appState.broadcastBookingRequest({
+      targetDriverId: null,
+      durationHours: duration,
+      tripType: tripType,
+      pickupAddress: pickup,
+      carModel: state.selection.carModel || 'Hyundai Creta (Automatic)'
+    });
+
+    if (window.soundFx) window.soundFx.playSuccessChime();
+    window.showToast('⚡ Request broadcasted to all nearby drivers in Vijayawada!', 'success');
+    this.openWaitingRoomModal(req);
+  }
+
+  // Opens the Waiting Room Modal
+  openWaitingRoomModal(req) {
+    const modal = document.getElementById('directRequestWaitingModal');
+    if (!modal) return;
+
+    const state = window.appState.get();
+    const targetDriver = req.targetDriver || (req.targetDriverId ? state.drivers.find(d => d.id === req.targetDriverId) : null);
+
+    const nameEl = document.getElementById('waitingDriverName');
+    const avatarEl = document.getElementById('waitingDriverAvatar');
+    const ratingEl = document.getElementById('waitingDriverRating');
+    const specialtyEl = document.getElementById('waitingDriverSpecialty');
+    const etaEl = document.getElementById('waitingDriverEta');
+    const statusTextEl = document.getElementById('waitingStatusText');
+    const subTextEl = document.getElementById('waitingSubText');
+    const altSection = document.getElementById('alternativeDriversSection');
+    const altList = document.getElementById('alternativeDriversList');
+
+    if (targetDriver) {
+      if (nameEl) nameEl.textContent = targetDriver.name;
+      if (avatarEl) avatarEl.src = targetDriver.avatar;
+      if (ratingEl) ratingEl.textContent = `⭐ ${targetDriver.rating}`;
+      if (specialtyEl) specialtyEl.textContent = `Specialist: ${targetDriver.specialty}`;
+      if (etaEl) etaEl.textContent = `~${targetDriver.etaMins} mins away · ${targetDriver.distanceKm} km`;
+      if (statusTextEl) statusTextEl.textContent = `Waiting for ${targetDriver.name} to accept your booking...`;
+      if (subTextEl) subTextEl.textContent = `Direct dispatch alert sent to ${targetDriver.name}'s Driver Portal.`;
+    } else {
+      if (nameEl) nameEl.textContent = 'All Available Drivers';
+      if (avatarEl) avatarEl.src = 'assets/driverbee-icon.svg';
+      if (ratingEl) ratingEl.textContent = `⭐ 4.9 Avg`;
+      if (specialtyEl) specialtyEl.textContent = 'Broadcasting to all verified drivers nearby';
+      if (etaEl) etaEl.textContent = 'Earliest driver response matches duty';
+      if (statusTextEl) statusTextEl.textContent = 'Broadcasting to 6 nearby drivers in Vijayawada...';
+      if (subTextEl) subTextEl.textContent = 'First driver to accept will navigate to your doorstep.';
     }
 
-    setTimeout(() => {
-      window.soundFx.playSuccessChime();
-      const newBooking = window.appState.createBooking({
-        driver: driver,
-        carModel: state.selection.carModel || 'Customer Car',
-        fare: fare,
-        paymentMethod: this.selectedPaymentMethod,
-        tripType: state.selection.tripType,
-        durationHours: state.selection.durationHours
-      });
+    // Populate alternative drivers list
+    const alternatives = state.drivers.filter(d => (!targetDriver || d.id !== targetDriver.id) && d.status !== 'on_trip').slice(0, 2);
+    if (altList && alternatives.length > 0) {
+      altList.innerHTML = alternatives.map(alt => `
+        <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="${alt.avatar}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80'" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #0066FF;">
+            <div>
+              <div style="font-weight: 800; font-size: 0.95rem; color: #0F172A;">${alt.name} <span style="font-size: 0.75rem; color: #F59E0B; font-weight: 800;">⭐ ${alt.rating}</span></div>
+              <div style="font-size: 0.78rem; color: #64748B;">${alt.category} · ${alt.etaMins} mins away</div>
+            </div>
+          </div>
+          <button onclick="customerCtrl.switchAlternativeDriver('${alt.id}')" style="background: #10B981; color: #FFFFFF; border: none; padding: 7px 14px; border-radius: 9999px; font-weight: 800; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">
+            <span>Switch & Request</span> <i class="fa-solid fa-arrow-right" style="font-size: 0.7rem;"></i>
+          </button>
+        </div>
+      `).join('');
+      if (altSection) altSection.style.display = 'block';
+    } else if (altSection) {
+      altSection.style.display = 'none';
+    }
 
-      this.closeBookingDrawer();
-      if (confirmBtn) {
-        confirmBtn.innerHTML = `<span>Confirm & Dispatch Driver</span> <i class="fa-solid fa-arrow-right"></i>`;
-        confirmBtn.disabled = false;
+    modal.classList.add('active');
+
+    // Countdown Timer (30s)
+    this.waitingSecondsLeft = 30;
+    const fillEl = document.getElementById('directWaitingTimerFill');
+    const secEl = document.getElementById('directWaitingSecondsText');
+
+    if (this.waitingTimerInterval) clearInterval(this.waitingTimerInterval);
+    this.waitingTimerInterval = setInterval(() => {
+      this.waitingSecondsLeft -= 1;
+      if (fillEl) fillEl.style.width = `${(this.waitingSecondsLeft / 30) * 100}%`;
+      if (secEl) secEl.textContent = `${this.waitingSecondsLeft}s`;
+
+      if (this.waitingSecondsLeft <= 0) {
+        clearInterval(this.waitingTimerInterval);
+        if (targetDriver) {
+          window.showToast(`${targetDriver.name} is occupied. Broadcasting to other nearby drivers...`, 'warning');
+          this.fallbackBroadcastToAll();
+        }
       }
+    }, 1000);
+  }
 
-      window.showToast('🎉 Driver Confirmed! Dispatched to your location.', 'success');
-      this.showTrackingScreen(newBooking);
-    }, 1200);
+  // Switch direct request to an alternative driver who is active
+  switchAlternativeDriver(driverId) {
+    window.appState.switchDirectDriver(driverId);
+    const state = window.appState.get();
+    const driver = state.drivers.find(d => d.id === driverId);
+    if (driver) {
+      if (window.soundFx) window.soundFx.playSuccessChime();
+      window.showToast(`Switched request to ${driver.name}!`, 'success');
+      this.openWaitingRoomModal(state.liveDispatch);
+    }
+  }
+
+  // Fallback to Broadcast to All Drivers
+  fallbackBroadcastToAll() {
+    window.appState.broadcastToAllDrivers();
+    const state = window.appState.get();
+    if (window.soundFx) window.soundFx.playSuccessChime();
+    window.showToast('📡 Now broadcasting to all available drivers nearby!', 'accent');
+    this.openWaitingRoomModal(state.liveDispatch);
+  }
+
+  // Cancel direct waiting request
+  cancelDirectRequestWaiting() {
+    if (this.waitingTimerInterval) clearInterval(this.waitingTimerInterval);
+    const modal = document.getElementById('directRequestWaitingModal');
+    if (modal) modal.classList.remove('active');
+    window.showToast('Request cancelled. You can select another driver.', 'accent');
   }
 
   showTrackingScreen(booking) {
+    if (this.waitingTimerInterval) clearInterval(this.waitingTimerInterval);
+    const modal = document.getElementById('directRequestWaitingModal');
+    if (modal) modal.classList.remove('active');
+
     window.switchAppView('screen-tracking');
-    
+    this.populateTrackingDetails(booking);
+
+    setTimeout(() => {
+      if (window.mapManager) {
+        window.mapManager.initTrackingMap('trackingMap');
+      }
+    }, 200);
+
+    this.initTripCountdown();
+    this.syncActiveSessionBanner();
+  }
+
+  populateTrackingDetails(booking) {
+    if (!booking) return;
+
     const driverNameEl = document.getElementById('trackDriverName');
     const driverCarEl = document.getElementById('trackDriverCar');
     const driverPlateEl = document.getElementById('trackDriverPlate');
     const driverAvatarEl = document.getElementById('trackDriverAvatar');
     const otpEl = document.getElementById('trackOtpNumber');
 
-    if (driverNameEl) driverNameEl.textContent = booking.driver.name;
-    if (driverCarEl) driverCarEl.textContent = booking.driver.category;
-    if (driverPlateEl) driverPlateEl.textContent = `${booking.driver.experienceYears} Yrs Exp`;
-    if (driverAvatarEl) driverAvatarEl.src = booking.driver.avatar;
-    if (otpEl) otpEl.textContent = booking.otp;
+    if (booking.driver) {
+      if (driverNameEl) driverNameEl.textContent = booking.driver.name;
+      if (driverCarEl) driverCarEl.textContent = `${booking.driver.category} · ${booking.durationHours || 4}h Booked`;
+      if (driverPlateEl) driverPlateEl.textContent = `${booking.driver.experienceYears} Yrs Exp`;
+      if (driverAvatarEl) driverAvatarEl.src = booking.driver.avatar;
+    }
 
-    setTimeout(() => {
-      window.mapManager.initTrackingMap('trackingMap');
-    }, 200);
+    if (otpEl) otpEl.textContent = booking.otp || '5815';
+
+    // Update status timeline
+    const step2 = document.getElementById('stepCarOnWay');
+    const step3 = document.getElementById('stepArrived');
+    const step4 = document.getElementById('stepTripActive');
+
+    if (booking.status === 'searching') {
+      if (step2) { step2.className = 'timeline-step current'; }
+      if (step3) { step3.className = 'timeline-step'; }
+      if (step4) { step4.className = 'timeline-step'; }
+    } else if (booking.status === 'driver_accepted' || booking.status === 'driver_assigned') {
+      if (step2) { step2.className = 'timeline-step completed'; }
+      if (step3) { step3.className = 'timeline-step current'; }
+      if (step4) { step4.className = 'timeline-step'; }
+    } else if (booking.status === 'arrived') {
+      if (step2) { step2.className = 'timeline-step completed'; }
+      if (step3) { step3.className = 'timeline-step completed'; }
+      if (step4) { step4.className = 'timeline-step current'; }
+    } else if (booking.status === 'trip_active') {
+      if (step2) { step2.className = 'timeline-step completed'; }
+      if (step3) { step3.className = 'timeline-step completed'; }
+      if (step4) { step4.className = 'timeline-step completed'; }
+    }
+  }
+
+  syncTrackingStateFromStore() {
+    const state = window.appState.get();
+
+    // Check if ride was ended by driver
+    if (state.lastCompletedTrip && state.lastCompletedTrip.id !== this.lastShownReceiptId) {
+      this.lastShownReceiptId = state.lastCompletedTrip.id;
+      this.showCustomerCompletedReceipt(state.lastCompletedTrip);
+    }
+
+    const booking = state.activeBooking;
+    if (!booking) return;
+
+    const isAcceptedOrActive = booking.status === 'driver_accepted' || booking.status === 'driver_assigned' || booking.status === 'arrived' || booking.status === 'trip_active';
+
+    // Check if direct request waiting modal is active
+    const waitingModal = document.getElementById('directRequestWaitingModal');
+    const isWaitingOpen = waitingModal && waitingModal.classList.contains('active');
+
+    if (isWaitingOpen && isAcceptedOrActive) {
+      if (this.waitingTimerInterval) clearInterval(this.waitingTimerInterval);
+      waitingModal.classList.remove('active');
+      if (window.soundFx) window.soundFx.playSuccessChime();
+      window.showToast(`🎉 ${booking.driver ? booking.driver.name : 'Driver'} accepted your request! Reaching your pickup spot in ~${booking.driver ? booking.driver.etaMins : 6} mins.`, 'success');
+      this.showTrackingScreen(booking);
+      return;
+    } else if (isWaitingOpen && booking.status === 'declined_by_driver') {
+      const statusTextEl = document.getElementById('waitingStatusText');
+      const subTextEl = document.getElementById('waitingSubText');
+      if (statusTextEl) statusTextEl.innerHTML = `<span style="color: #EF4444;">${booking.targetDriverName || 'Driver'} is currently unavailable</span>`;
+      if (subTextEl) subTextEl.textContent = 'Please switch to an alternative driver below or broadcast to all nearby drivers.';
+    }
+
+    // Auto-transition to tracking screen if booking is accepted/active and user is on homepage/results
+    const trackingView = document.getElementById('liveTrackingDesktopView');
+    const isTrackingVisible = trackingView && trackingView.style.display === 'block';
+
+    if (isAcceptedOrActive && !isTrackingVisible) {
+      this.showTrackingScreen(booking);
+      return;
+    }
+
+    this.populateTrackingDetails(booking);
+
+    // Update Countdown Timer & OTP Box based on whether OTP has been entered
+    const timerEl = document.getElementById('activeTripCountdownTimer');
+    const headerEl = document.getElementById('activeHudCountdownHeader');
+    const subEl = document.getElementById('activeHudCountdownSub');
+    const otpBox = document.querySelector('.handover-otp-box');
+
+    const totalSecs = (booking.durationHours || 2) * 3600;
+
+    if (booking.status !== 'trip_active') {
+      // PRE-OTP: Timer is paused and waiting for driver to verify OTP
+      const hours = Math.floor(totalSecs / 3600);
+      const minutes = Math.floor((totalSecs % 3600) / 60);
+      const seconds = totalSecs % 60;
+      const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+      if (timerEl) timerEl.textContent = formatted;
+      if (headerEl) headerEl.innerHTML = `<span style="color: #F59E0B; font-weight: 800;"><i class="fa-solid fa-hourglass-start"></i> SESSION DURATION (${booking.durationHours || 2}H BOOKED)</span>`;
+      if (subEl) subEl.innerHTML = `<span style="color: #FDE68A; font-weight: 700;">⏳ Timer starts as soon as driver verifies your OTP</span>`;
+
+      if (otpBox) {
+        otpBox.style.border = '2px solid #0066FF';
+        otpBox.style.background = '#EFF6FF';
+      }
+    } else {
+      // POST-OTP (Trip Active): Timer is live & counting down
+      if (!this.hasNotifiedOtpStarted) {
+        this.hasNotifiedOtpStarted = true;
+        if (window.soundFx) window.soundFx.playSuccessChime();
+        window.showToast('🔑 Driver entered Security OTP! Your driving duty session timer is now running.', 'success');
+      }
+
+      if (headerEl) headerEl.innerHTML = `<span style="color: #10B981; font-weight: 800;"><i class="fa-solid fa-circle-dot fa-fade"></i> TRIP ACTIVE · DRIVER WITH YOU FOR</span>`;
+      if (subEl) subEl.innerHTML = `<span style="color: #94A3B8;">remaining in your booked driving duty</span>`;
+
+      if (otpBox) {
+        otpBox.style.border = '1.5px solid #86EFAC';
+        otpBox.style.background = '#ECFDF5';
+        const otpLabel = otpBox.querySelector('.otp-label');
+        if (otpLabel) otpLabel.innerHTML = `<span style="color: #15803D; font-weight: 800;"><i class="fa-solid fa-circle-check"></i> Security OTP Verified</span>`;
+      }
+    }
 
     this.initTripCountdown();
+  }
+
+  showCustomerCompletedReceipt(receipt) {
+    const modal = document.getElementById('customerCompletedModal');
+    if (!modal) return;
+
+    const nameEl = document.getElementById('custReceiptDriverName');
+    const imgEl = document.getElementById('custReceiptDriverImg');
+    const hoursEl = document.getElementById('custReceiptHours');
+    const tripTypeEl = document.getElementById('custReceiptTripType');
+    const baseEl = document.getElementById('custReceiptBaseFare');
+    const gstEl = document.getElementById('custReceiptGst');
+    const totalEl = document.getElementById('custReceiptTotal');
+
+    if (nameEl) nameEl.textContent = receipt.driverName || 'Rajesh Kumar';
+    if (imgEl && receipt.driver) imgEl.src = receipt.driver.avatar;
+    if (hoursEl) hoursEl.textContent = `${receipt.durationHours} Hours Booked`;
+    if (tripTypeEl) tripTypeEl.textContent = receipt.tripType || 'Within City Drive';
+    if (baseEl) baseEl.textContent = `₹${(receipt.fareBreakdown ? receipt.fareBreakdown.baseRate : receipt.totalFare - 81).toLocaleString('en-IN')}`;
+    if (gstEl) gstEl.textContent = `₹${(receipt.fareBreakdown ? receipt.fareBreakdown.gst : 32)}`;
+    if (totalEl) totalEl.textContent = `₹${receipt.totalFare.toLocaleString('en-IN')}`;
+
+    if (window.soundFx) window.soundFx.playSuccessChime();
+    modal.classList.add('active');
+  }
+
+  dismissCompletedReceipt() {
+    const modal = document.getElementById('customerCompletedModal');
+    if (modal) modal.classList.remove('active');
+
+    const trackModal = document.getElementById('trackingModal');
+    if (trackModal) trackModal.classList.remove('active');
+
+    window.appState.clearLastCompletedTrip();
+    this.lastShownReceiptId = null;
+    this.hasNotifiedOtpStarted = false;
     this.syncActiveSessionBanner();
+    window.showToast('✅ Ready to book your next driver!', 'success');
+
+    // Scroll smoothly to booking hero
+    const hero = document.getElementById('hero');
+    if (hero) hero.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  rateDriverAndDismiss(stars = 5) {
+    if (window.soundFx) window.soundFx.playSuccessChime();
+    window.showToast(`⭐ Thank you for rating your driver ${stars} Stars!`, 'success');
+    setTimeout(() => {
+      this.dismissCompletedReceipt();
+    }, 600);
   }
 
   syncActiveSessionBanner() {
@@ -600,8 +966,9 @@ class CustomerController {
     if (banner) {
       if (state.activeBooking) {
         banner.style.display = 'block';
+        const driverName = state.activeBooking.driver ? state.activeBooking.driver.name : 'Verified Driver';
         if (alertText) {
-          alertText.textContent = `${state.activeBooking.driver.name} is assigned to drive your car · ${state.activeBooking.durationHours} Hours Session`;
+          alertText.textContent = `${driverName} is assigned to drive your car · ${state.activeBooking.durationHours || 4} Hours Session (${state.activeBooking.status.replace('_', ' ').toUpperCase()})`;
         }
       } else {
         banner.style.display = 'none';
@@ -610,24 +977,10 @@ class CustomerController {
   }
 
   onDriverArrived() {
-    const booking = window.appState.get().activeBooking;
-    if (!booking) return;
-
+    window.appState.driverArrivedAtPickup();
     window.soundFx.playCarBeep();
     window.showToast('🚘 Your Professional Driver has arrived at your doorstep!', 'success');
-
-    const step2 = document.getElementById('stepCarOnWay');
-    const step3 = document.getElementById('stepArrived');
-    const step4 = document.getElementById('stepTripActive');
-    
-    if (step2) { step2.classList.remove('current'); step2.classList.add('completed'); }
-    if (step3) { step3.classList.add('completed'); }
-    if (step4) { step4.classList.add('current'); }
-
-    window.appState.updateActiveBooking({
-      status: 'trip_active',
-      stepIndex: 4
-    });
+    this.syncTrackingStateFromStore();
   }
 
   initTripCountdown() {
@@ -637,13 +990,34 @@ class CustomerController {
       const state = window.appState.get();
       if (!state.activeBooking) return;
 
-      const remaining = state.activeBooking.remainingSeconds;
+      const booking = state.activeBooking;
+      const isTripActive = booking.status === 'trip_active';
+
+      const timerEl = document.getElementById('activeTripCountdownTimer');
+      const totalSecs = (booking.durationHours || 2) * 3600;
+
+      // DO NOT DECREMENT if trip is NOT yet active (waiting for OTP)
+      if (!isTripActive) {
+        const hours = Math.floor(totalSecs / 3600);
+        const minutes = Math.floor((totalSecs % 3600) / 60);
+        const seconds = totalSecs % 60;
+        const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        if (timerEl) timerEl.textContent = formatted;
+        return;
+      }
+
+      // Initialize remaining seconds if not already initialized
+      if (typeof booking.remainingSeconds === 'undefined' || booking.remainingSeconds === null) {
+        booking.remainingSeconds = totalSecs;
+      }
+
+      const remaining = booking.remainingSeconds;
       if (remaining <= 0) {
         clearInterval(this.countdownInterval);
         return;
       }
 
-      state.activeBooking.remainingSeconds -= 1;
+      booking.remainingSeconds -= 1;
       
       const hours = Math.floor(remaining / 3600);
       const minutes = Math.floor((remaining % 3600) / 60);
@@ -651,7 +1025,6 @@ class CustomerController {
 
       const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-      const timerEl = document.getElementById('activeTripCountdownTimer');
       if (timerEl) {
         timerEl.textContent = formatted;
       }
@@ -710,6 +1083,7 @@ class CustomerController {
   syncActiveScreen() {
     const state = window.appState.get();
     this.syncActiveSessionBanner();
+    this.syncTrackingStateFromStore();
     if (state.activeBooking) {
       this.initTripCountdown();
     }

@@ -17,21 +17,20 @@
   <!-- Leaflet Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+  <link rel="icon" type="image/svg+xml" href="assets/driverbee-icon.svg">
+
   <!-- App Stylesheets -->
-  <link rel="stylesheet" href="css/main.css?v=6">
-  <link rel="stylesheet" href="css/components.css?v=6">
+  <link rel="stylesheet" href="css/main.css?v=8">
+  <link rel="stylesheet" href="css/components.css?v=8">
 </head>
 <body>
 
   <!-- Sticky Luxury Website Navbar -->
   <header class="site-navbar">
     <div class="container nav-container">
-      <a href="#hero" class="site-brand">
-        <div class="brand-icon-box" style="background: linear-gradient(135deg, #F59E0B, #D97706); box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
-          <i class="fa-solid fa-bolt" style="color: #FFFFFF;"></i>
-        </div>
-        <span>Driver<span style="color: #F59E0B;">Bee</span></span>
-        <span class="site-brand-badge" style="background: #FFFBEB; color: #B45309; border-color: rgba(245, 158, 11, 0.3);">ON DEMAND DRIVER</span>
+      <a href="#hero" class="site-brand" title="DriverBee - On Demand Driver Platform">
+        <img src="assets/driverbee-logo.svg" alt="DriverBee" class="site-logo-img">
+        <span class="site-brand-badge">ON DEMAND DRIVER</span>
       </a>
 
       <ul class="nav-menu-links">
@@ -43,6 +42,17 @@
       </ul>
 
       <div class="nav-actions">
+        <a href="admin.html" class="nav-btn-secondary" style="background: #0A0E1A; color: #FFFFFF; border: 1px solid #1E293B; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-shield-halved" style="color: #38BDF8;"></i>
+          <span>Admin Hub</span>
+        </a>
+
+        <a href="driver.html" class="nav-btn-secondary" style="background: #0A0E1A; color: #FFFFFF; border: 1px solid #1E293B; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-id-card-clip" style="color: #F59E0B;"></i>
+          <span>Driver Portal</span>
+          <span style="background: #F59E0B; color: #000; font-size: 0.65rem; font-weight: 900; padding: 2px 6px; border-radius: 9999px;">EARN</span>
+        </a>
+
         <button class="nav-btn-secondary" id="btnMyBookingsNav">
           <i class="fa-solid fa-calendar-check" style="color: #0066FF;"></i>
           <span>My Bookings</span>
@@ -492,6 +502,22 @@
           </div>
         </div>
 
+        <!-- Broadcast to All Quick Match Callout Banner -->
+        <div style="background: linear-gradient(135deg, #0A0E1A, #1E293B); border-radius: 20px; padding: 18px 24px; color: #FFFFFF; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px; box-shadow: var(--shadow-sm); border: 1px solid #334155;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(0, 102, 255, 0.2); border: 1.5px solid #0066FF; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #38BDF8;">
+              <i class="fa-solid fa-tower-broadcast"></i>
+            </div>
+            <div>
+              <div style="font-weight: 900; font-size: 1.1rem; color: #FFFFFF;">Need a driver right away?</div>
+              <div style="font-size: 0.85rem; color: #94A3B8;">Broadcast to all 6 nearby verified drivers — first to accept comes directly to you.</div>
+            </div>
+          </div>
+          <button onclick="customerCtrl.broadcastToAllDirectly()" style="background: #0066FF; color: #FFFFFF; border: none; padding: 12px 24px; border-radius: var(--radius-full); font-weight: 900; font-size: 0.92rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(0, 102, 255, 0.4);">
+            <i class="fa-solid fa-bolt"></i> Broadcast to All Drivers
+          </button>
+        </div>
+
         <!-- Split Grid: Left Drivers Cards, Right Live GPS Radar Map -->
         <div class="results-split-grid">
           <!-- Left Column: Matched Drivers Cards -->
@@ -612,11 +638,13 @@
               <div class="otp-number" id="trackOtpNumber">4821</div>
             </div>
 
-            <!-- Active Countdown Clock (When Trip is Active) -->
-            <div id="activeHudCountdownBox" style="background: #0A0E1A; color: #fff; border-radius: 20px; padding: 22px; text-align: center; box-shadow: var(--shadow-md);">
-              <div style="font-size: 0.8rem; color: #38BDF8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Driver with you for</div>
-              <div class="countdown-main-timer" id="activeTripCountdownTimer" style="font-size: 2.6rem;">03:42:18</div>
-              <div style="font-size: 0.8rem; color: #94A3B8;">remaining in your booked session</div>
+            <!-- Active Countdown Clock (Starts AFTER OTP is Verified) -->
+            <div id="activeHudCountdownBox" style="background: #0F172A; color: #fff; border-radius: 20px; padding: 22px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.15); border: 1.5px solid #1E293B;">
+              <div id="activeHudCountdownHeader" style="font-size: 0.8rem; color: #F59E0B; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">
+                <i class="fa-solid fa-hourglass-half fa-spin"></i> Session Duration: 2 Hours
+              </div>
+              <div class="countdown-main-timer" id="activeTripCountdownTimer" style="font-size: 2.7rem; font-weight: 900; letter-spacing: -0.02em; color: #FFFFFF;">02:00:00</div>
+              <div id="activeHudCountdownSub" style="font-size: 0.82rem; color: #94A3B8; margin-top: 4px;">⏳ Waiting for driver to verify OTP to start timer</div>
             </div>
 
             <!-- Action Buttons -->
@@ -628,10 +656,6 @@
                 <i class="fa-solid fa-triangle-exclamation"></i> 24x7 Helpline SOS
               </button>
             </div>
-
-            <button class="btn" id="simArrivedBtn" style="background: #0066FF; color: #fff; border: none; border-radius: 14px; padding: 14px; font-weight: 800; font-size: 0.95rem; cursor: pointer;">
-              <i class="fa-solid fa-forward-step"></i> Simulate Driver Arrived at Doorstep
-            </button>
           </div>
         </div>
 
@@ -639,228 +663,10 @@
     </div>
 
 
-    <!-- ==========================================================
-         VIEW 3: DRIVER PARTNER PORTAL (DESKTOP)
-         ========================================================== -->
-    <div id="driverAppView" style="display: none; padding: 40px 0; background: #F8FAFC;">
-      <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-          <div>
-            <h2 style="font-size: 2.2rem; font-weight: 900; color: #0F172A;">Driver Partner Operations Portal</h2>
-            <p style="color: #64748B;">Manage your availability, receive on-demand driving requests, and start trips</p>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border: 1.5px solid #CBD5E1; padding: 10px 20px; border-radius: var(--radius-full);">
-            <span id="driverStatusLabel" style="font-weight: 800; color: #10B981;">Online & Receiving Requests</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="driverOnlineToggle" checked>
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="driver-portal-grid">
-          <!-- Driver Left Info & Earnings -->
-          <div style="display: flex; flex-direction: column; gap: 20px;">
-            <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 24px; padding: 26px;">
-              <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2.5px solid #0066FF;">
-                <div>
-                  <h3 style="font-size: 1.25rem; font-weight: 900;">Rajesh Kumar</h3>
-                  <div style="font-size: 0.82rem; color: #64748B;">Specialty: All Manual & Automatic Cars</div>
-                  <div style="font-size: 0.8rem; font-weight: 800; color: #F59E0B; margin-top: 3px;">⭐ 4.9 Rating · 1,420 Completed Trips</div>
-                </div>
-              </div>
-
-              <div style="border-top: 1.5px solid #F1F5F9; padding-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                <div>
-                  <div style="font-size: 0.78rem; color: #64748B; font-weight: 700;">Today's Payout</div>
-                  <div style="font-size: 1.6rem; font-weight: 900; color: #10B981;" id="driverTodayEarnings">₹2,150</div>
-                </div>
-                <div>
-                  <div style="font-size: 0.78rem; color: #64748B; font-weight: 700;">Trips Done</div>
-                  <div style="font-size: 1.6rem; font-weight: 900; color: #0066FF;" id="driverTodayTrips">3</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Trigger Demo Request -->
-            <button id="driverTriggerSimBtn" style="background: #0F172A; color: #fff; border: none; border-radius: 16px; padding: 16px; font-weight: 800; font-size: 0.95rem; cursor: pointer;">
-              <i class="fa-solid fa-bell"></i> Simulate Incoming Customer Driver Request
-            </button>
-          </div>
-
-          <!-- Driver Right Area: Radar / Navigation -->
-          <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 24px; padding: 26px;">
-            <div class="driver-radar-card" id="driverRadarCard" style="margin: 0; min-height: 340px; justify-content: center;">
-              <div class="radar-circle-outer">
-                <div class="radar-pulse-anim"></div>
-                <div class="radar-circle-inner"><i class="fa-solid fa-radar radar-center-icon"></i></div>
-              </div>
-              <h3 style="font-size: 1.3rem; font-weight: 900; margin-bottom: 6px;">Hotspot Radar Active: Benz Circle</h3>
-              <p style="font-size: 0.9rem; color: #94A3B8; max-width: 420px;">Waiting for nearby customers who need a driver for their car. 15-second response window.</p>
-            </div>
-
-            <!-- Active Navigation Panel -->
-            <div id="driverActiveTripPanel" style="display: none; flex-direction: column; gap: 16px;">
-              <div style="height: 250px; border-radius: 18px; overflow: hidden;"><div id="driverNavMap"></div></div>
-              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                <div>
-                  <div style="font-size: 0.78rem; font-weight: 800; color: #0066FF;">MEET CUSTOMER AT</div>
-                  <div style="font-size: 1.15rem; font-weight: 800;">Benz Circle, Vijayawada</div>
-                </div>
-                <div id="driverOtpSection" style="display: flex; gap: 8px;">
-                  <input type="text" id="driverOtpInput" placeholder="4-digit OTP" maxlength="4" style="width: 120px; border: 1.5px solid #CBD5E1; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1.15rem;">
-                  <button id="driverVerifyOtpBtn" style="background: #10B981; color: #fff; border: none; border-radius: 10px; padding: 0 18px; font-weight: 800; cursor: pointer;">Verify & Start Driving</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
 
 
-    <!-- ==========================================================
-         VIEW 4: ADMIN CONTROL CENTER (DESKTOP)
-         ========================================================== -->
-    <div id="adminAppView" style="display: none; padding: 40px 0; background: #0A0E1A; color: #FFFFFF; min-height: 80vh;">
-      <div class="container" style="display: flex; flex-direction: column; gap: 30px;">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <h2 style="font-size: 2.3rem; font-weight: 900; letter-spacing: -0.02em;">Driver Network Admin Hub</h2>
-            <p style="color: #94A3B8; font-size: 1rem;">Dynamic hourly pricing configurator, driver verification, and live dispatch</p>
-          </div>
-          <button id="adminResetPricingBtn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 20px; border-radius: var(--radius-md); font-size: 0.88rem; font-weight: 700; cursor: pointer;">
-            <i class="fa-solid fa-rotate-left"></i> Reset Defaults (₹300/₹400)
-          </button>
-        </div>
 
-        <!-- KPI Metrics -->
-        <div class="admin-stats-grid">
-          <div class="admin-stat-card">
-            <span class="admin-stat-label">Total Platform Revenue</span>
-            <span class="admin-stat-num" id="adminStatRevenue">₹2,84,500</span>
-          </div>
-          <div class="admin-stat-card">
-            <span class="admin-stat-label">Completed Driver Trips</span>
-            <span class="admin-stat-num" id="adminStatBookings">348</span>
-          </div>
-          <div class="admin-stat-card">
-            <span class="admin-stat-label">Active Verified Drivers</span>
-            <span class="admin-stat-num" id="adminStatFleet">6</span>
-          </div>
-          <div class="admin-stat-card">
-            <span class="admin-stat-label">Driver Quality Rating</span>
-            <span class="admin-stat-num" id="adminStatRating">⭐ 4.9</span>
-          </div>
-        </div>
 
-        <!-- Tabs Navigation -->
-        <div class="admin-nav-tabs">
-          <button class="admin-tab-btn active" data-tab="pricing">Hourly Pricing Matrix</button>
-          <button class="admin-tab-btn" data-tab="fleet">Driver Team</button>
-          <button class="admin-tab-btn" data-tab="fleetMap">Live Telemetry Map</button>
-          <button class="admin-tab-btn" data-tab="coupons">Promo Code Manager</button>
-        </div>
-
-        <!-- Tab 1: Pricing Config -->
-        <div class="admin-card-panel admin-tab-content" id="adminTab_pricing">
-          <div>
-            <h3 style="font-size: 1.3rem; font-weight: 800;">Configurable Driver Duration Pricing</h3>
-            <p style="font-size: 0.88rem; color: #94A3B8; margin-top: 4px;">
-              Update 2h, 4h, 6h, and 8h driver rental rates for Within City and Outside City independently. Changes take effect on the customer website immediately.
-            </p>
-          </div>
-
-          <table class="pricing-table-matrix">
-            <thead>
-              <tr>
-                <th>Booking Duration</th>
-                <th>Within City Driver Package Rate (₹)</th>
-                <th>Outside City (Outstation Driver Rate) (₹)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><b>2 Hours Duration</b></td>
-                <td><input type="number" class="price-edit-input" id="priceWithin_2" value="300"></td>
-                <td><input type="number" class="price-edit-input" id="priceOutside_2" value="400"></td>
-              </tr>
-              <tr>
-                <td><b>4 Hours Duration</b></td>
-                <td><input type="number" class="price-edit-input" id="priceWithin_4" value="600"></td>
-                <td><input type="number" class="price-edit-input" id="priceOutside_4" value="800"></td>
-              </tr>
-              <tr>
-                <td><b>6 Hours Duration</b></td>
-                <td><input type="number" class="price-edit-input" id="priceWithin_6" value="900"></td>
-                <td><input type="number" class="price-edit-input" id="priceOutside_6" value="1200"></td>
-              </tr>
-              <tr>
-                <td><b>8 Hours Duration</b></td>
-                <td><input type="number" class="price-edit-input" id="priceWithin_8" value="1200"></td>
-                <td><input type="number" class="price-edit-input" id="priceOutside_8" value="1600"></td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 18px;">
-            <div>
-              <label style="font-size: 0.82rem; color: #94A3B8; display: block; margin-bottom: 6px;">GST Tax Percentage (%)</label>
-              <input type="number" class="price-edit-input" id="priceGst" value="5" style="width: 100%;">
-            </div>
-            <div>
-              <label style="font-size: 0.82rem; color: #94A3B8; display: block; margin-bottom: 6px;">Safety & Background Verification Fee (₹)</label>
-              <input type="number" class="price-edit-input" id="priceInsurance" value="49" style="width: 100%;">
-            </div>
-          </div>
-
-          <button class="admin-save-btn" id="adminSavePricingBtn" style="padding: 13px 26px; font-size: 0.95rem;">
-            <i class="fa-solid fa-floppy-disk"></i> Save & Apply Driver Pricing
-          </button>
-        </div>
-
-        <!-- Tab 2: Driver Team Management -->
-        <div class="admin-card-panel admin-tab-content" id="adminTab_fleet" style="display: none;">
-          <table class="fleet-admin-table">
-            <thead>
-              <tr>
-                <th>Driver Name</th>
-                <th>Languages</th>
-                <th>Multiplier</th>
-                <th>Availability</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="adminFleetTableBody"></tbody>
-          </table>
-        </div>
-
-        <!-- Tab 3: Dispatcher Map -->
-        <div class="admin-card-panel admin-tab-content" id="adminTab_fleetMap" style="display: none;">
-          <div style="height: 450px; border-radius: 18px; overflow: hidden;"><div id="dispatcherMap"></div></div>
-        </div>
-
-        <!-- Tab 4: Promo Codes -->
-        <div class="admin-card-panel admin-tab-content" id="adminTab_coupons" style="display: none;">
-          <div style="display: flex; gap: 14px; align-items: flex-end;">
-            <div style="flex: 1;">
-              <label style="font-size: 0.82rem; color: #94A3B8; display: block; margin-bottom: 6px;">Coupon Code</label>
-              <input type="text" class="price-edit-input" id="newPromoCode" placeholder="e.g. FIRSTDRIVER" style="width: 100%; text-transform: uppercase;">
-            </div>
-            <div style="width: 160px;">
-              <label style="font-size: 0.82rem; color: #94A3B8; display: block; margin-bottom: 6px;">Discount (₹)</label>
-              <input type="number" class="price-edit-input" id="newPromoDiscount" placeholder="100" style="width: 100%;">
-            </div>
-            <button class="admin-save-btn" id="adminAddPromoBtn" style="padding: 11px 22px;">+ Add Coupon</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
 
   </div>
 
@@ -1061,32 +867,152 @@
     </div>
   </div>
 
-  <!-- Driver Incoming Ride Request Modal -->
-  <div class="modal-overlay-web" id="driverIncomingModal">
-    <div class="modal-window-card" style="max-width: 480px;">
-      <div class="request-timer-bar"><div class="request-timer-fill" id="requestTimerFill"></div></div>
+  <!-- Customer Completed Ride Receipt Modal -->
+  <div class="modal-overlay-web" id="customerCompletedModal">
+    <div class="modal-window-card" style="max-width: 520px; border-radius: 28px; padding: 32px; border: 2px solid #10B981; position: relative;">
+      
+      <!-- Top Close Button -->
+      <button onclick="customerCtrl.dismissCompletedReceipt()" style="position: absolute; top: 18px; right: 20px; background: #F1F5F9; border: 1px solid #CBD5E1; color: #64748B; width: 36px; height: 36px; border-radius: 50%; font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+        &times;
+      </button>
 
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <span class="badge badge-accent">New Driver Request</span>
-          <h3 style="font-size: 1.4rem; font-weight: 900; margin-top: 4px;">₹600 · 4 Hours Drive</h3>
+      <div style="text-align: center;">
+        <div style="width: 76px; height: 76px; border-radius: 50%; background: #ECFDF5; color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 16px; border: 3px solid #34D399; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25);">
+          <i class="fa-solid fa-flag-checkered"></i>
         </div>
-        <div style="text-align: right;">
-          <div style="font-weight: 800; color: #10B981;">1.2 km away</div>
-          <div style="font-size: 0.78rem; color: #64748B;">Within City</div>
+
+        <h3 style="font-size: 1.6rem; font-weight: 900; color: #0F172A; margin: 0 0 6px;">Ride Completed!</h3>
+        <p style="font-size: 0.92rem; color: #64748B; margin: 0 0 20px;">Your verified driver has safely completed the booked duty session.</p>
+
+        <!-- Driver Snapshot -->
+        <div style="display: flex; align-items: center; gap: 14px; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 18px; padding: 14px 18px; margin-bottom: 20px; text-align: left;">
+          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80" alt="Driver" id="custReceiptDriverImg" style="width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2px solid #0066FF;">
+          <div>
+            <div style="font-size: 1.15rem; font-weight: 900; color: #0F172A;" id="custReceiptDriverName">Rajesh Kumar</div>
+            <div style="font-size: 0.8rem; color: #64748B;">DriverBee Verified Professional · ⭐ 4.95 Rating</div>
+          </div>
+        </div>
+
+        <!-- Receipt Itemized Breakdown -->
+        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 18px; padding: 20px; text-align: left; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #64748B; font-weight: 600;">Duration Booked:</span>
+            <span style="font-weight: 900; color: #0066FF; font-size: 1.05rem;" id="custReceiptHours">4 Hours Booked</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #64748B; font-weight: 600;">Trip Type:</span>
+            <span style="font-weight: 700; color: #0F172A;" id="custReceiptTripType">Within City Drive</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #64748B; font-weight: 600;">Driver Base Fare:</span>
+            <span style="font-weight: 700; color: #0F172A;" id="custReceiptBaseFare">₹519</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #64748B; font-weight: 600;">Ride Insurance:</span>
+            <span style="font-weight: 700; color: #0F172A;">₹49</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #64748B; font-weight: 600;">GST (5%):</span>
+            <span style="font-weight: 700; color: #0F172A;" id="custReceiptGst">₹32</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 1.5px dashed #CBD5E1;">
+            <span style="color: #0F172A; font-weight: 900; font-size: 1.1rem;">Total Paid:</span>
+            <span style="font-weight: 900; color: #10B981; font-size: 1.4rem;" id="custReceiptTotal">₹600</span>
+          </div>
+        </div>
+
+        <!-- Rating Prompt -->
+        <div style="margin-bottom: 24px;">
+          <div style="font-size: 0.85rem; font-weight: 800; color: #64748B; margin-bottom: 8px;">RATE YOUR DRIVER EXPERIENCE</div>
+          <div style="display: flex; justify-content: center; gap: 10px; font-size: 2rem; color: #F59E0B; cursor: pointer;">
+            <span onclick="customerCtrl.rateDriverAndDismiss(1)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="customerCtrl.rateDriverAndDismiss(2)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="customerCtrl.rateDriverAndDismiss(3)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="customerCtrl.rateDriverAndDismiss(4)"><i class="fa-solid fa-star"></i></span>
+            <span onclick="customerCtrl.rateDriverAndDismiss(5)"><i class="fa-solid fa-star"></i></span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button onclick="customerCtrl.dismissCompletedReceipt()" style="width: 100%; background: #0066FF; color: #FFFFFF; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 900; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(0, 102, 255, 0.3);">
+            <i class="fa-solid fa-arrow-left"></i> Done & Book Another Driver
+          </button>
+          
+          <button onclick="showToast('Receipt & Tax Invoice downloaded (PDF)', 'success')" style="width: 100%; background: #F8FAFC; color: #475569; border: 1.5px solid #CBD5E1; padding: 12px 20px; border-radius: 14px; font-weight: 800; font-size: 0.88rem; cursor: pointer;">
+            <i class="fa-solid fa-file-arrow-down"></i> Download Trip Invoice (PDF)
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Direct Driver Request Waiting Room Modal -->
+  <div class="modal-overlay-web" id="directRequestWaitingModal">
+    <div class="modal-window-card" style="max-width: 520px; border-radius: 28px; padding: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.3);">
+      
+      <!-- Progress timer bar -->
+      <div style="height: 6px; width: 100%; background: #E2E8F0; border-radius: 9999px; overflow: hidden; margin-bottom: 20px;">
+        <div id="directWaitingTimerFill" style="height: 100%; width: 100%; background: linear-gradient(90deg, #0066FF, #00C6FF); transition: width 1s linear;"></div>
+      </div>
+
+      <!-- Top Header Badge -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+        <span style="background: #EFF6FF; color: #0066FF; border: 1.5px solid #BFDBFE; font-size: 0.8rem; font-weight: 800; padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-paper-plane fa-fade"></i> DIRECT REQUEST SENT
+        </span>
+        <span style="font-weight: 900; color: #EF4444; font-size: 0.95rem;" id="directWaitingSecondsText">30s</span>
+      </div>
+
+      <!-- Targeted Driver Profile Banner -->
+      <div style="background: linear-gradient(135deg, #0F172A, #1E293B); border-radius: 20px; padding: 20px; color: #FFFFFF; display: flex; align-items: center; gap: 16px; margin-bottom: 18px; position: relative; overflow: hidden;">
+        <div style="position: relative;">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" id="waitingDriverAvatar" alt="Target Driver" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid #38BDF8; box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);">
+          <span style="position: absolute; bottom: 0; right: 0; width: 18px; height: 18px; background: #10B981; border: 2.5px solid #0F172A; border-radius: 50%;"></span>
+        </div>
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h3 style="font-size: 1.3rem; font-weight: 900; margin: 0; color: #FFFFFF;" id="waitingDriverName">Rajesh Kumar</h3>
+            <span style="background: #F59E0B; color: #000; font-size: 0.72rem; font-weight: 900; padding: 2px 8px; border-radius: 6px;" id="waitingDriverRating">⭐ 4.9</span>
+          </div>
+          <div style="font-size: 0.82rem; color: #94A3B8; margin-top: 3px;" id="waitingDriverSpecialty">Specialist: Manual & Automatic Cars</div>
+          <div style="font-size: 0.78rem; color: #38BDF8; font-weight: 700; margin-top: 4px;" id="waitingDriverEta">~6 mins away from Benz Circle</div>
         </div>
       </div>
 
-      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 16px;">
-        <div style="font-size: 0.78rem; color: #64748B; font-weight: 700;">CUSTOMER LOCATION</div>
-        <div style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin-top: 2px;">Benz Circle, Vijayawada</div>
-        <div style="font-size: 0.85rem; color: #0066FF; margin-top: 4px;">Customer Car: Hyundai Creta (Automatic)</div>
+      <!-- Pulse Status Box -->
+      <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 18px; padding: 16px; text-align: center; margin-bottom: 20px;">
+        <div style="font-weight: 800; color: #0F172A; font-size: 1.02rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i class="fa-solid fa-circle-notch fa-spin" style="color: #0066FF;"></i>
+          <span id="waitingStatusText">Waiting for driver to accept your booking...</span>
+        </div>
+        <p style="font-size: 0.82rem; color: #64748B; margin: 6px 0 0;" id="waitingSubText">The driver has received your direct dispatch on their Driver Portal.</p>
       </div>
 
-      <div class="req-action-grid">
-        <button class="req-reject-btn" id="driverRejectReqBtn">Decline</button>
-        <button class="req-accept-btn" id="driverAcceptReqBtn">Accept Drive</button>
+      <!-- Alternative Active Drivers (Ready to Accept) -->
+      <div id="alternativeDriversSection" style="margin-bottom: 20px;">
+        <div style="font-size: 0.8rem; font-weight: 800; color: #64748B; letter-spacing: 0.04em; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+          <span>ALSO AVAILABLE & READY NEARBY</span>
+          <span style="color: #10B981; font-weight: 800; font-size: 0.75rem;"><i class="fa-solid fa-bolt"></i> Instant Match</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;" id="alternativeDriversList">
+          <!-- Populated dynamically via customerCtrl -->
+        </div>
       </div>
+
+      <!-- Actions: Broadcast to All or Cancel -->
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button id="btnWaitingBroadcastAll" onclick="customerCtrl.fallbackBroadcastToAll()" style="width: 100%; background: #0066FF; color: #FFFFFF; border: none; padding: 14px; border-radius: 14px; font-weight: 900; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(0, 102, 255, 0.3);">
+          <i class="fa-solid fa-tower-broadcast"></i> Broadcast to All Nearby Drivers (Faster Match)
+        </button>
+
+        <button onclick="customerCtrl.cancelDirectRequestWaiting()" style="width: 100%; background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; padding: 12px; border-radius: 14px; font-weight: 800; font-size: 0.9rem; cursor: pointer;">
+          Cancel & Pick Another Driver
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -1122,11 +1048,8 @@
 
       <div class="footer-grid">
         <div class="footer-brand-col">
-          <a href="#hero" class="site-brand" style="color: #fff;">
-            <div class="brand-icon-box" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
-              <i class="fa-solid fa-bolt" style="color: #FFFFFF;"></i>
-            </div>
-            <span>Driver<span style="color: #F59E0B;">Bee</span></span>
+          <a href="#hero" class="site-brand" style="color: #fff;" title="DriverBee">
+            <img src="assets/driverbee-logo-white.svg" alt="DriverBee" class="site-logo-img" style="height: 42px;">
           </a>
           <p>DriverBee is the premier on-demand driver and personal driver platform. Book a verified driver to drive your car anywhere for fixed hourly packages (2h, 4h, 6h, 8h).</p>
         </div>
@@ -1164,8 +1087,8 @@
       <div class="footer-bottom">
         <div>© 2026 DriverBee Technologies Inc. All rights reserved.</div>
         <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
-          <a href="javascript:void(0)" onclick="window.switchAppView('customer'); document.getElementById('driverAppView').style.display='block'; document.getElementById('customerAppView').style.display='none'; document.getElementById('adminAppView').style.display='none'; window.scrollTo({top:0, behavior:'smooth'});" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Driver Partner Portal</a>
-          <a href="javascript:void(0)" onclick="window.switchAppView('customer'); document.getElementById('adminAppView').style.display='block'; document.getElementById('customerAppView').style.display='none'; document.getElementById('driverAppView').style.display='none'; window.scrollTo({top:0, behavior:'smooth'});" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Admin Control Hub</a>
+          <a href="driver.html" target="_blank" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Driver Partner Portal</a>
+          <a href="admin.html" target="_blank" style="color: #94A3B8; text-decoration: none; font-weight: 600;">Admin Mission Control</a>
           <a href="javascript:void(0)" style="color: #94A3B8; text-decoration: none;">Privacy Policy</a>
           <a href="javascript:void(0)" style="color: #94A3B8; text-decoration: none;">Terms of Service</a>
         </div>
@@ -1177,11 +1100,9 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <!-- App JavaScript Modules -->
-  <script src="js/state.js"></script>
-  <script src="js/map.js"></script>
-  <script src="js/customer.js"></script>
-  <script src="js/driver.js"></script>
-  <script src="js/admin.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=15"></script>
+  <script src="js/state.js?v=15"></script>
+  <script src="js/map.js?v=15"></script>
+  <script src="js/customer.js?v=15"></script>
 </body>
 </html>

@@ -4,13 +4,22 @@
    ========================================================================== */
 
 :root {
-  /* Brand Color Palette */
-  --color-primary: #0A0E1A;
+  /* DriverBee Signature Logo Palette */
+  --color-primary: #0A0E1A;             /* Obsidian Charcoal from "DRIVER" */
   --color-primary-rgb: 10, 14, 26;
-  --color-accent: #0066FF;
-  --color-accent-hover: #0052CC;
-  --color-accent-subtle: #EEF4FF;
-  --color-accent-glow: rgba(0, 102, 255, 0.22);
+  --color-bee-gold: #F59E0B;            /* Honey Bee Gold from "BEE" */
+  --color-bee-amber: #D97706;           /* Deep Amber Gold Hover */
+  --color-bee-dark: #B45309;            /* High Contrast Honey Text */
+  --color-bee-tint: #FFFBEB;            /* Soft Honey Light Glow */
+  --color-bee-glow: rgba(245, 158, 11, 0.28);
+
+  /* Primary Brand Accent */
+  --color-accent: #F59E0B;
+  --color-accent-hover: #D97706;
+  --color-accent-subtle: #FFFBEB;
+  --color-accent-glow: rgba(245, 158, 11, 0.28);
+  --color-accent-blue: #0066FF;
+  
   --color-cyan: #00D2FF;
   --color-gold: #F59E0B;
   --color-emerald: #10B981;
@@ -21,10 +30,10 @@
   --color-warning: #F59E0B;
   --color-danger: #EF4444;
 
-  /* Surfaces & Backgrounds */
-  --bg-page: #F8FAFC;
+  /* Surfaces & Clean White Backgrounds */
+  --bg-page: #FFFFFF;
   --bg-surface: #FFFFFF;
-  --bg-subtle: #F1F5F9;
+  --bg-subtle: #F8FAFC;
   --bg-muted: #E2E8F0;
   --bg-dark: #0A0E1A;
   --bg-dark-card: #131B2E;
@@ -32,20 +41,20 @@
   /* Text & Content */
   --text-primary: #0F172A;
   --text-secondary: #475569;
-  --text-muted: #94A3B8;
+  --text-muted: #64748B;
   --text-inverse: #FFFFFF;
 
   /* Borders & Shadows */
   --border-subtle: #E2E8F0;
   --border-medium: #CBD5E1;
-  --border-focus: #0066FF;
+  --border-focus: #F59E0B;
   
   --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
   --shadow-md: 0 10px 25px -4px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.03);
   --shadow-lg: 0 20px 40px -8px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.04);
   --shadow-xl: 0 30px 60px -12px rgba(15, 23, 42, 0.2);
-  --shadow-glow: 0 0 25px rgba(0, 102, 255, 0.35);
+  --shadow-glow: 0 0 25px rgba(245, 158, 11, 0.35);
 
   /* Radius */
   --radius-xs: 6px;
@@ -122,13 +131,20 @@ body {
 .site-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
-  color: var(--text-primary);
-  font-weight: 900;
-  font-size: 1.35rem;
-  letter-spacing: -0.035em;
   flex-shrink: 0;
+}
+
+.site-logo-img {
+  height: 38px;
+  width: auto;
+  display: block;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.site-brand:hover .site-logo-img {
+  transform: scale(1.03);
 }
 
 .brand-icon-box {
@@ -146,15 +162,15 @@ body {
 }
 
 .site-brand-badge {
-  background: #EEF4FF;
-  color: #0066FF;
+  background: #FFFBEB;
+  color: #B45309;
   font-size: 0.68rem;
   font-weight: 800;
   padding: 4px 9px;
   border-radius: var(--radius-full);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  border: 1px solid rgba(0, 102, 255, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   white-space: nowrap;
 }
 
@@ -162,8 +178,8 @@ body {
   .site-brand-badge {
     display: none;
   }
-  .site-brand {
-    font-size: 1.22rem;
+  .site-logo-img {
+    height: 32px;
   }
 }
 
